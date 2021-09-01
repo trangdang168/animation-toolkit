@@ -1,141 +1,91 @@
-# AnimationToolkit
+# Animation Toolkit
 
-Simple animation library
+Repository for animation demos and tools
 
-Design goals:
-- keep the code simple and minimal
-- don't repeat code between classes
-- the code should match the pseudocode from class
-- the code should be easily unit testable
-- it should be easy to prototype animation algorithms using the code (esp. create small demo applications)
+# Tools and dependencies
 
-# Demos (/examples)
+To obtain the source and generate build files, you will need to install git and cmake. To build, you will 
+also need to install GLEW, GLFW, and GLM.
 
-* behaviors
-  * ABehaviorDemo - bloids demo using physics-based steerable controller
-* blend
-  * ABlend - blends two walking motions (strafe + forward walk) of the same length
-  * AStyle - blends walking motions (sad, confident, chicken)
-  * ABadBlend - blends two different motions (left_strafe + flip to upper cut)
-* boxes
-  * AStackingBoxes-2018 - positioning boxes using transforms (values from 2018)
-  * AStackingBoxes-2019 - positioning boxes using transforms (values from 2019)
-* characters
-  * ASkeletonPractice - Simple program using ASkeleton API
-  * ACharacterViewer - demo containing custom characters (googly eyes, bear, blinky)
-  * AFancy - character with top hat and monocle
-  * AButterfly - simple skeleton with root and two joints
-  * AButterflyWings - simple skeleton with geometry for the wings and body (spheres)
-  * AButterflyBonus - full butterfly animation
-  * AThriller - Warrok thriller dance with devil character
-  * AThrillerCrowd - a grid of randomized devil dancers
-* crossfade
-  * ACrossfadeViewer - crossfade demo (implementation is in libsrc/animation/MotionBlender)
-  * AInterpolateBlend - uses interpolate to generate the transition (move to motion blender?)
-  * AReorient - modify the starting position and direction of forward walk
-* curveEditor
-  * ACurveEditor - Spline curve editor demo
-  * ACurveViewer - Uses old spline API to draw a hard-coded spline curve (2018 assignment)
-  * ACurveBonus - two procedural curve demos (old API)
-     * Dots - spheres animated with randomly generated splines
-     * Grass - animated control points with yellow/green lines
-  * ACurveDot - animates a dot based on curve editor (integrated into curveEditor in 2019)
-  * ATestHermite - test interpolated values for in-class example
-  * ATestCatmullRom - test interpolated values for in-class example
-  * hermite.m - octave file for solving for slopes
-* cyclops
-  * ALooker - Cyclops character looks at a target
-  * ADancer - Cyclops character with animated hands and hips (based on IK)
-* fk
-  * AFKViewer - viewer for motion files
-* footclamp
-  * AFootClamp - foot clamp demo on uneven terrain
-* ik
-  * AIKSimple - Two-link chain with joints along +x axis
-  * AIKViewer - Interactive IK demo (CCD + Analytic)
-  * ACCDStep - Performs CCD one step at a time
-* ikWalk
-  * IK walker, never completed
-* interpolation
-  * AParticleLerp - animate single particle position using lerp
-  * AColorLerp1 - animate single particle color
-  * AColorLerp2 - animate single particle position and color
-  * AGradient - two-way color gradient visualized with nxn grid of cubes
-  * ADrawCubic - sets control points and draws a single curve (for testing)
-  * AParticleCubic - animates a dot along the path of a cubic
-  * AAnimateCube - interpolates between two curves
-  * AWavy - bonus demo with control points animated with sine
-  * AScreensaver - interpolates between succsessive randomized curves
-* keyviewer
-  * AKeyviewer - character key frame editor (2018, uses old API)
-  * AKeyframeCone - uses a position and rotational spline to animate a cone to travel the corners of a square
-* particles
-  * AFireworksViewer - fireworks with rocket demo 
-  * AParticleViewer - general particle system demo with lots of options
-* physics
-  * AUnstoppable - character punches a wall
-  * ABoxSim1 - implement simple net force example
-  * ABoxSim2 - implement simple net force example
-  * ABoxSim3 - implement simple net force example
-  * AForceParticle - simulates a simple particle under forces
-  * ABoxSim-2019 - simple net force example as part o the assignment
-* rotations
-  * ATeapotsviewer - grid of teapots for testing conversions
-  * ASlerpTeapotCompare - compares different implementations of interpolating rotations (class demo)
-  * ASlerpteapot - simple rotation spline with 3 keys 
-  * ARipples - grid of rotating cubes which respond to mouse
-  * AQuatMultiply - random test
-* shapes
-  * AShape - simple draw program using a shape class (intro assignment 2018)
-  * ABonusShape - example draw demos
-    * AShapeHead
-    * AShapeColor
-    * AFlower
-    * ATorus
-    * AShapePath
-    * AShapeSpiral
-* splines - old kruft spline code (not used)
-* steering 
-  * ASteeringDemo - single character with physics-based steering controller
-  * ASteeringbehaviorDemo - boid behaviors with steerable character
-* tentacles
-  * Atentacle - procedurally animated tentacle
-* trig - intro assignment 2019
-  * AEyes - eyes look back and fortht a target
-  * ALook - eyes look at a target controlled by the mouse
-  * AVelocity - many particles all moving in the same direction
-  * ACircles - concentric circles, rotating in opposite directions
-  * AOscillate - circle moves up and down
-  * ALine - line points to the mouse
-  * AField - grid of lines 
-  * AParticle - simple single particle moves in a straight line (class example)
-  * ACircle - simple single particle moves in a circle (class example)
-* unitTests - unit tests
-* viewer2d - Empty 2D scene
-* viewer3d - Empty 3D scene
-* wasdController
-   * AWASDSimple - simple keyboard-based controller which overrides the root position/rotation of a walking character
+* GLEW: Needed for accessing openGL 4.0 features
+* GLFW: Implements our window and user interaction events, such as mouse and keyboard 
+* GLM: Implements useful vector and matrix functionality for graphics
 
-  
-# Course spring 2019 post-mortem
+On windows, the dependencies are included in this repository. For macOS, you will need to install a subset of them separately.
 
-- Simple test programs (skeleton/motion pratice) worked great for learning APIs
-- leaving base-code more open-ended made it easier for students
+## Windows
 
+On windows
 
-# Course spring 2018 post-mortem
+* [Download and install git](https://git-scm.com/download/win).
+* [Download and install cmake](https://github.com/Kitware/CMake/releases/download/v3.19.4/cmake-3.19.4-win64-x64.msi).
 
-- make gallery of student work for course webpage
-- Backup course notes
-- finish ragdoll
-- Document examples/assignments
-- ODE QWOP
-- update unit tests for blend and ik
-- update code for behavior assignment
-- todo: add comments to code (see AGLObjects.h)
-- http://www.gdcvault.com/play/1022984/IK-Rig-Procedural-Pose
-- cross product on bigger spaces: https://en.wikipedia.org/wiki/Cross_product#Generalizations
-- converting between LHS and RHS (points vs vectors): http://www.howtobuildsoftware.com/index.php/how-do/bT1K/3d-rotation-geometry-coordinate-systems-euler-angles-right-handed-euler-angles-xyz-to-left-handed-euler-angles-xyz
-- git-hook to check file sizes
-- check gimbol lock (quat multiply)
-- Save assignment grade templates
+## macOS
+
+On macOS, run the following commands in terminal
+
+* `brew install cmake`
+* `brew install glew`
+* `brew install glfw3`
+
+GLM is included with this repository but you can also install it [using the instructions here](http://macappstore.org/glm/).
+
+## Ubuntu
+
+On Ubuntu, run the following commands in terminal
+
+* `sudo apt-get install cmake`
+* `sudo apt-get libglew-dev`
+* `sudo apt-get install libglfw3-dev`
+
+GLM is included with this repository but you can also install it.
+
+* `sudo apt-get install libglm-dev`
+
+# Build on windows
+
+First, open the folder containing this source in Explorer. From here, right-click and open `Git Bash`. This will open a terminal window.
+
+From git bash, run the following commands
+
+* `mkdir build`
+* `cd build`
+* `cmake -G "Visual Studio 16 2019" ..`
+
+Running these commands in git bash [should look something like this](build-win.txt).
+
+The above commands will create Visual Studio project files inside the build folder. It is important to create the subdirectory `build`, to 
+keep our repository clean of generated files. 
+
+Double click on `CS312-GettingStarted.sln` to open the project. 
+If you don't know where to start with visual studio, or need a refresher, [this video shows how to build, run, and debug with Visual Studio](https://youtu.be/hZ_ZZy0j7Vk)
+
+# Build on macOS
+
+From terminal, navigate to the folder containing this code. Then, run the following commands
+
+* `mkdir build`
+* `cd build`
+* `cmake ..`
+* `make`
+* `../bin/<demo-name>`
+
+Running these commands in terminal [should look something like this](build-mac.txt).
+
+Running `cmake ..` will generate Makefiles for this project. Running `make` compiles the program. The last command runs the compiled program. You can also use Visual Studio to run and debug this program. It is important to create the subdirectory `build`, to 
+keep our repository clean of generated files.
+
+If you don't know where to start compiling and running C++, or need a refresher, [this video shows how to build, run, and debug with terminal or Visual Studio Code on macOS](https://youtu.be/DEytbPbfZVo)
+
+# Build on Ubuntu
+
+From terminal, navigate to the folder containing this code. Then, run the following commands
+
+* `mkdir build`
+* `cd build`
+* `cmake ..`
+* `make`
+* `../bin/<demo-name>`
+
+Running `cmake ..` will generate Makefiles for this project. Running `make` compiles the program. The last command runs the compiled program. You can also use Visual Studio to run and debug this program. It is important to create the subdirectory `build`, to 
+keep our repository clean of generated files.
