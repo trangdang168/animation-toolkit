@@ -1,4 +1,4 @@
-# AnimationToolkit
+# Animation Toolkit
 
 Repository for animation demos and tools
 
