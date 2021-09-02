@@ -7,6 +7,11 @@
 #include <vector>
 
 namespace atkui {
+  /**
+   * Orthographic: 2D
+   * Perspective: 3D
+   * Only object in front of the camera can be seen.
+   */ 
 enum Display { Orthographic, Perspective };
 
 class Framework : public agl::Window {
