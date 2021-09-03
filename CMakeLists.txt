@@ -53,14 +53,11 @@ if (WIN32) # NOTE: Needs testing for optional AntTweakBar
 elseif (APPLE)
 
   set(CMAKE_MACOSX_RPATH 1)
-  set(CMAKE_CXX_FLAGS "-Wall 
-    -Wno-deprecated-declarations 
-    -Wno-reorder-ctor 
-    -Wno-unused-variable 
-    -g -stdlib=libc++ -std=c++14")
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -Wno-reorder-ctor -Wno-unused-variable -g -stdlib=libc++ -std=c++14")
   set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
   set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
   find_library(GL_LIB OpenGL)
+  find_library(GLEW glew)
   find_library(GLFW glfw)
   add_definitions(-DAPPLE)
 
@@ -72,9 +69,7 @@ elseif (APPLE)
     libsrc/
     )
 
-  set(LIBRARY_DIRS
-    libsrc/
-    )
+  set(LIBRARY_DIRS libsrc/)
 
   #find_library(AntTweakBar NAMES AntTweakBar)
   #if (AntTweakBar)
@@ -85,7 +80,7 @@ elseif (APPLE)
   #  message("No AntTweakBar")
   #  set(CORE ${GL_LIB} ${GL_GLUT})
   #endif()
-  set(CORE ${GL_LIB} ${GL_GLUT})
+  set(CORE agl ${GL_LIB} ${GLEW} ${GLFW})
 
 
 elseif (UNIX)
