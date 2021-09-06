@@ -16,12 +16,20 @@ class Sphere2D : public atkui::Framework {
     double y = height() * 0.5;
     double radius = 100; 
     drawSphere(vec3(x,y,0), radius);
+
+    // draw a sphere behind the big sphere
+    setColor(vec3(1, 0, 0));
+
+    double behindRadius = 120;
+    drawSphere(vec3(x, y, -50), behindRadius);
   }
 };
 
 int main(int argc, char** argv)
 {
   Sphere2D viewer;
+
+  // run simply closes the viewer?
   viewer.run();
   return 0;
 }
