@@ -4,8 +4,8 @@ Repository for animation demos and tools
 
 Helpful Links:
 
-* link:https://brynmawr-cs317-f21.github.io/website/[CS317 course website]
-* link:https://brynmawr-cs317-f21.github.io/website/asst00.html[Assignment 0]
+* [CS317 course website](https://brynmawr-cs317-f21.github.io/website/)
+* [Assignment 00: Hello CS317](https://brynmawr-cs317-f21.github.io/website/asst00.html)
 
 # Tools and dependencies
 
