@@ -8,8 +8,6 @@ class Eyes : public atkui::Framework
 {
   public:
     Eyes() : atkui::Framework(atkui::Orthographic) {
-      theta = 0.0f;
-      thetaRate = 0.50f;
       radius = 30.0f;
     }
 
@@ -20,8 +18,9 @@ class Eyes : public atkui::Framework
       drawSphere(vec3(175, 250, 0), 80);
       drawSphere(vec3(325, 250, 0), 80);
 
-      theta += thetaRate * dt();
-      float px = radius * cos(theta);  
+      // theta += thetaRate * dt();
+      // float px = radius * cos(theta);  
+      float px = radius * cos(elapsedTime());
 
       setColor(vec3(0, 0, 0));
       drawSphere(vec3(175 + px, 250, 50), 30);
@@ -30,8 +29,6 @@ class Eyes : public atkui::Framework
 
     // eyes moving to the side
     private:
-      float theta;
-      float thetaRate;
       float radius; // how wide the moving eyes would go
 };
 
