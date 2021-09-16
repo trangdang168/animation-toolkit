@@ -59,7 +59,7 @@ Pose& Pose::operator = (const Pose& p)
    v.jointRots.push_back(q);
    }
    return s;
-   }*/
+   }
 
 std::ostream& operator<<(std::ostream& s, const Pose& v)
 {
@@ -72,7 +72,7 @@ std::ostream& operator<<(std::ostream& s, const Pose& v)
   s << ")\n";
   return s;
 }
-
+*/
 Pose Pose::Lerp(const Pose& key1, const Pose& key2, float u)
 {
   Pose pose;
