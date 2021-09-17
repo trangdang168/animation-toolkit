@@ -25,15 +25,17 @@ class Particles : public atkui::Framework
     radius = 10.0f;
     // direction = agl::randomUnitVector();
     direction = vec3(1, 1, 0);
+    for (int i = 0; i < numParticles; i++) {
+      Particle p = Particle();
+      particles.push_back(p);
+    }
   }
 
   virtual void scene() {
 
-    for (int i = 0; i < numParticles; i++) {
-      Particle p = particles[i];
-
-      vec3 newPosition = moveParticle(p);
-      setColor(p.color);
+    for (std::list<Particle>::iterator p=particles.begin() ; p != particles.end(); ++p) {
+      vec3 newPosition = moveParticle(*p);
+      setColor((*p).color);
       drawSphere(newPosition, radius);
     }
   }
@@ -69,7 +71,7 @@ class Particles : public atkui::Framework
   private:
     int numParticles = 200;
     float radius;
-    Particle particles[200];
+    std::list<Particle> particles;
     vec3 direction;
 };
 
