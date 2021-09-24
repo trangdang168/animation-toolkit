@@ -3,6 +3,21 @@
 #define CONTROL_POINTS 4
 using namespace glm;
 
+class Curve {
+  public:
+    vec3 color;
+    std::array <vec3, 4> controlPoints;
+    Curve(std::array <vec3, 4> controlPoints) {
+      this->color = agl::randomUnitVector();
+      this->controlPoints = controlPoints;
+    }
+
+    Curve() {
+      this->color = vec3(0, 0, 0);
+      this->controlPoints = std::array <vec3, 4> ();
+    }
+};
+
 class Screensaver : public atkui::Framework {
  public:
   Screensaver() : atkui::Framework(atkui::Orthographic) {
@@ -11,13 +26,11 @@ class Screensaver : public atkui::Framework {
   void setup() {
 
     // generate random control points for both curves
-    curve1 = generateControlPoints();
-    curve1Color = agl::randomUnitVector();
+    curve1 = Curve(generateControlPoints());
 
-    curve2 = generateControlPoints();
-    curve2Color = agl::randomUnitVector();
+    curve2 = Curve(generateControlPoints());
 
-    currentColor = agl::randomUnitVector();
+    current = curve1;
 
     duration = 1.0f; // set the durations for each interpolation
     t = 0.0f;
@@ -30,22 +43,18 @@ class Screensaver : public atkui::Framework {
       t = 0.0f;
       // fill in curve 2 with new control points
       curve1 = curve2;
-      curve1Color = curve2Color;
-      curve2 = generateControlPoints();
-      curve2Color = agl::randomUnitVector();
-      currentColor = agl::randomUnitVector();
+      curve2 = Curve(generateControlPoints());
+      current.color = curve2.color;
     }
 
     for (int i = 0; i < CONTROL_POINTS; i ++) {
-      current[i] = LERP(curve1[i], curve2[i], t);
+      current.controlPoints[i] = LERP(curve1.controlPoints[i], 
+                                      curve2.controlPoints[i], t);
     }
 
     // draw the current curve!
-    setColor(curve1Color);
     drawCurve(curve1);
-    setColor(curve2Color);
     drawCurve(curve2);
-    setColor(currentColor);
     drawCurve(current);
   }
 
@@ -77,25 +86,25 @@ class Screensaver : public atkui::Framework {
     return result;
   }
 
-  void drawCurve(std::array <vec3, 4> curve) {
+  void drawCurve(Curve curve) {
+    setColor(curve.color);
     float curveStep = 0.005;
     for (float tCurve = 0; tCurve < 1; tCurve += curveStep) {
-      vec3 x = bernstein(tCurve, curve);
-      vec3 y = bernstein(tCurve + curveStep, curve);
+      vec3 x = bernstein(tCurve, curve.controlPoints);
+      vec3 y = bernstein(tCurve + curveStep, curve.controlPoints);
       drawLine(x, y);
     }
   }
 
   private:
-    std::array <vec3, 4> curve1; // stores the 4 control points for curve 1
-    std::array <vec3, 4> curve2; // stores 4 control points for curve 2
-    std::array <vec3, 4> current;
+    Curve curve1; 
+    Curve curve2; 
+    Curve current;
 
-    vec3 curve1Color;
-    vec3 curve2Color;
-    vec3 currentColor;
     float duration;
     float t; 
+
+    // trailing effects
 };
 
 int main(int argc, char** argv) {
