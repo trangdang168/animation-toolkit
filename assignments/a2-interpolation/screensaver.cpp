@@ -1,6 +1,7 @@
 #include "atkui/framework.h"
 #include <array>
 #define CONTROL_POINTS 4
+#define TIME_GAP 0.05
 using namespace glm;
 
 class Curve {
@@ -36,6 +37,7 @@ class Screensaver : public atkui::Framework {
     t = 0.0f;
 
     savedCurvesSize = 50;
+    lastSavedCurve = 0.0f;
   }
 
   void scene() {
@@ -44,15 +46,8 @@ class Screensaver : public atkui::Framework {
     if (t > 1.0f) {
       t = 0.0f;
       // fill in curve 2 with new control points
-      if (curves.size() == savedCurvesSize) {
-        curves.pop_front();
-      }
-      if (fmod(elapsedTime(), 0.8) == 0) {
-       curves.push_back(curve1);
-      } 
       curve1 = curve2;
       curve2 = Curve(generateControlPoints());
-      current.color = curve2.color;
     }
 
     for (int i = 0; i < CONTROL_POINTS; i ++) {
@@ -60,10 +55,20 @@ class Screensaver : public atkui::Framework {
                                       curve2.controlPoints[i], t);
     }
 
+    current.color = curve1.color * (1 - t) + curve2.color * t;
     // draw the current curve!
     drawCurve(curve1);
     drawCurve(curve2);
     drawCurve(current);
+
+    if (curves.size() == savedCurvesSize) {
+        curves.pop_front();
+    }
+
+    if ((elapsedTime() - lastSavedCurve) > TIME_GAP) {
+      lastSavedCurve = elapsedTime();
+      curves.push_back(current);
+    }
 
     for (std::list<Curve>::iterator c=curves.begin() ; c != curves.end(); ++c) {
       drawCurve(*c);
@@ -117,8 +122,9 @@ class Screensaver : public atkui::Framework {
     float t; 
 
     // trailing effects
-    std::list<Curve> curves;
     int savedCurvesSize;
+    std::list<Curve> curves;
+    float lastSavedCurve;
 };
 
 int main(int argc, char** argv) {
