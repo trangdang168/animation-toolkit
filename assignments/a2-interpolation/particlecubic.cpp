@@ -12,7 +12,6 @@ class ParticleCubic : public atkui::Framework {
     B2 = vec3(270, 100, 0);
     B3 = vec3(400, 450, 0);
     duration = 5.0f; // should take 5s to traverse the curve
-    // pos = B0;
     step = 1.0f / duration;
   }
 
