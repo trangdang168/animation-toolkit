@@ -18,10 +18,10 @@ class ParticleCubic : public atkui::Framework {
   void scene() {
     float tP = fmod(step * elapsedTime(), 1); // particle's
     vec3 pos = casteljau(tP);
-    setColor(vec3(1, 1, 1));
+    setColor(vec3(1, 1, 0));
     drawSphere(pos, 10);
 
-    // setColor(vec3(0, 0, 0));
+    setColor(vec3(0, 0, 0));
     drawCurve();
   }
 
