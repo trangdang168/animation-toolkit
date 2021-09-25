@@ -21,7 +21,7 @@ class ParticleCubic : public atkui::Framework {
     setColor(vec3(1, 1, 0));
     drawSphere(pos, 10);
 
-    setColor(vec3(0, 0, 0));
+    setColor(vec3(1, 1, 1));
     drawCurve();
   }
 
@@ -44,7 +44,7 @@ class ParticleCubic : public atkui::Framework {
 
   void drawCurve() {
     // draw Casteljau
-    float step = 0.005;
+    float step = 0.05;
     for (float t = 0; t < 1; t += step) {
       
       vec3 x = casteljau(t);
