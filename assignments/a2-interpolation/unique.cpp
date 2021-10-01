@@ -7,13 +7,13 @@ using namespace glm;
 
 class Firework {
    public:
-      vec3 color;
+      // vec3 color;
       vec3 position;
       float radius;
-   Firework(vec3 position, vec3 color) {
+   Firework(vec3 position) {
       radius = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
       this->position = position;
-      this->color = color;
+      // this->color = color;
    }
 };
 
@@ -44,7 +44,7 @@ class Fireworks : public atkui::Framework {
 
      vec3 position = f.position;
      float radius = f.radius;
-     vec3 color1 = f.color;
+     vec3 color1 = agl::randomUnitVector();
 
      // calculate theta
      float theta = radians(360.0f) / (NUM_BRANCHES);
@@ -56,11 +56,6 @@ class Fireworks : public atkui::Framework {
         float y = sin(newTheta) * radius + position[1];
         drawFireworkBranch(position, vec3(x, y, 0), color2, color1);  
      }
-
-     // draw straightlines from center to sides
-
-
-     // interpolate the color for each points starting from the center
   }
 
   void scene() {
@@ -70,9 +65,9 @@ class Fireworks : public atkui::Framework {
       _mouseY = position[1];
       mouseMove(_mouseX, _mouseY);
 
-      vec3 color = agl::randomUnitVector();
+      // vec3 color = agl::randomUnitVector();
       // drawFirework(vec3(_mouseX, _mouseY, 0), 100.0f, color);
-      Firework f = Firework(vec3(_mouseX, _mouseY, 0), color);
+      Firework f = Firework(vec3(_mouseX, _mouseY, 0));
 
       if (fireworks.size() == maxFireworks) {
          fireworks.pop_front();
