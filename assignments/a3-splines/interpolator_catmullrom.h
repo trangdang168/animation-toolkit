@@ -29,6 +29,8 @@ public:
     virtual void computeControlPoints(const std::vector<glm::vec3>& keys) {
        // todo: your code here
        // see: interpolator.h and writeup for details
+       mCtrlPoints.clear();
+       
        // segment 0
        mCtrlPoints.push_back(keys.at(0));
        mCtrlPoints.push_back(mCtrlPoints.at(0) + (1.0f/6.0f) * (keys.at(1) - keys.at(0)));
