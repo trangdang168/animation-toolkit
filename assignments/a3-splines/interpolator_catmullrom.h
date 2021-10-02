@@ -30,17 +30,38 @@ public:
        // todo: your code here
        // see: interpolator.h and writeup for details
        mCtrlPoints.clear();
+
+       // adapt with any number of control points
+
+       // loop through each segment
+       for (int i = 0; i <= keys.size() - 2; i++) {
+          mCtrlPoints.push_back(keys.at(i));
+          if (i == 0) {
+            mCtrlPoints.push_back(keys.at(0)+ (1.0f/6.0f) * (keys.at(1) - keys.at(0)));
+          } else {
+            mCtrlPoints.push_back(keys.at(i)+ (1.0f/6.0f) * (keys.at(i+1) - keys.at(i-1)));
+          }
+          // b0 is p0, b1 is p1 -
+          if (i == keys.size() - 2) {
+            mCtrlPoints.push_back(keys.at(i + 1)- (1.0f/6.0f) * (keys.at(i + 1) - keys.at(i)));
+          } else {
+            mCtrlPoints.push_back(keys.at(i + 1)- (1.0f/6.0f) * (keys.at(i + 2) - keys.at(i)));
+          }
+       }
+
+       // last segment
+       mCtrlPoints.push_back(keys.back());
        
        // segment 0
-       mCtrlPoints.push_back(keys.at(0));
-       mCtrlPoints.push_back(mCtrlPoints.at(0) + (1.0f/6.0f) * (keys.at(1) - keys.at(0)));
-       mCtrlPoints.push_back(keys.at(2) - (1.0f/6.0f) * (keys.at(2) - keys.at(0)));
+      //  mCtrlPoints.push_back(keys.at(0));
+      //  mCtrlPoints.push_back(mCtrlPoints.at(0) + (1.0f/6.0f) * (keys.at(1) - keys.at(0)));
+      //  mCtrlPoints.push_back(keys.at(2) - (1.0f/6.0f) * (keys.at(2) - keys.at(0)));
 
-      // segment 1 keys.at(2) - keys.at(0)
-       mCtrlPoints.push_back(keys.at(1));
-       mCtrlPoints.push_back(keys.at(1) + (1.0f/6.0f) * (keys.at(2) - keys.at(0)));
-       mCtrlPoints.push_back(keys.at(2)- (1.0f/6.0f) * (keys.at(2) - keys.at(1)));
-       mCtrlPoints.push_back(keys.at(2));
+      // // segment 1 keys.at(2) - keys.at(0)
+      //  mCtrlPoints.push_back(keys.at(1));
+      //  mCtrlPoints.push_back(keys.at(1) + (1.0f/6.0f) * (keys.at(2) - keys.at(0)));
+      //  mCtrlPoints.push_back(keys.at(2)- (1.0f/6.0f) * (keys.at(2) - keys.at(1)));
+      //  mCtrlPoints.push_back(keys.at(2));
     }
 };
 

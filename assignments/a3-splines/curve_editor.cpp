@@ -31,10 +31,47 @@ void CurveEditor::setup() {
 void CurveEditor::scene() {
   drawState();
   // todo: your code here
+
+  // mouseDown(GLFW_MOUSE_BUTTON_LEFT, 0);
+
+  // // control points by looping through control points and display
+  // //  spheres, handle different interpolator mode
+  setColor(vec3(0,0,1));
+
+  for (int i = 0; i < mSpline.getNumKeys(); i++) {
+    drawSphere(mSpline.getKey(i), 10);
+  }
+
+  // draw the line connecting points
+  setColor(vec3(0, 0, 1));
+  for (float t = 0.0; t < mSpline.getDuration(); t+= 0.01) {
+    vec3 point = mSpline.getValue(t);
+    drawSphere(point, 1);
+  }
+
+  if (mShowControlPoints) {
+    setColor(vec3(1,1,0));
+    
+    if (mSpline.getInterpolationType() == "Hermite") {
+      for (int i = 0; i < mSpline.getNumControlPoints(); i+=2) {
+        vec3 firstPoint = mSpline.getControlPoint(i);
+        vec3 secondPoint = mSpline.getControlPoint(i+1);
+        drawLine(firstPoint, firstPoint + secondPoint);
+        drawSphere(firstPoint + secondPoint, 10);
+      }
+    } else if (mSpline.getInterpolationType() == "Catmull-Rom") {
+      for (int i = 0; i < mSpline.getNumControlPoints() - 1; i+=1) {
+        vec3 firstPoint = mSpline.getControlPoint(i);
+        vec3 secondPoint = mSpline.getControlPoint(i+1);
+        drawLine(firstPoint, secondPoint);
+        drawSphere(firstPoint, 10);
+        drawSphere(secondPoint, 10);
+      }
+    }
+  }
 }
 
 void CurveEditor::addPoint(const vec3& p) {
-  //std::cout << "Add key: " << p << std::endl;
   mSpline.appendKey(mSpline.getNumKeys(), p);
 }
 
@@ -127,6 +164,7 @@ void CurveEditor::mouseDown(int pButton, int state) {
 
   if (mButtonState == GLFW_MOUSE_BUTTON_LEFT) {
     if (mMode == ADD) {
+
       vec3 tmp(p, 0);
       // guard against adding multiple copies of the same point
       // (multiple mouse events may be triggered for the same point)

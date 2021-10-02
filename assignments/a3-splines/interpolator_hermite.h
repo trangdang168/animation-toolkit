@@ -19,7 +19,6 @@ public:
     
        glm::vec3 result = glm::vec3(0);
        double segmentLoc = double(segment) * 2.0;
-    //    double iDouble = double(segmentLoc);
        // H 3 0
        result += bernstein(u, 3.0, 0.0, mCtrlPoints.at(segmentLoc));
        result += bernstein(u, 3.0, 1.0, mCtrlPoints.at(segmentLoc));
@@ -93,7 +92,6 @@ public:
 
             glm::vec3 v = 3.0f * (keys.at(keys.size() - 1) - keys.at(keys.size() - 2));
             p(keys.size() - 1,0) = v[0]; p(keys.size()-1,1) = v[1]; p(keys.size()-1,2) = v[2]; 
-            std::cout<< "NATURAL"<<std::endl;
         }
 
         pPrime = A.inverse() * p;
@@ -144,23 +142,3 @@ private:
 };
 
 #endif
-
-/**
- * ontrol point: vec3(0.000000, 0.000000, 0.000000)
-control point: vec3(1.000000, 0.000000, 0.000000)
-control point: vec3(1.000000, 2.000000, 0.000000)
-control point: vec3(1.321429, 2.035714, 0.000000)
-control point: vec3(3.000000, 3.000000, 0.000000)
-control point: vec3(2.714286, 0.857143, 0.000000)
-control point: vec3(6.000000, 3.000000, 0.000000)
-control point: vec3(2.821429, -2.464286, 0.000000)
-control point: vec3(8.000000, 0.000000, 0.000000)
-control point: vec3(1.000000, 0.000000, 0.000000)
-
-(clamped) interpolate(0, 0) = vec3(0.000000, 0.000000, 0.000000)
-(clamped) interpolate(3, 1) = vec3(8.000000, 0.000000, 0.000000)
-(clamped) interpolate(2, 0.5) = vec3(4.486607, 3.415179, 0.000000)
-(natural) interpolate(0, 0) = vec3(0.082321, 0.224750, 0.000000)
-(natural) interpolate(3, 1) = vec3(7.831821, 0.374250, 0.000000)
-(natural) interpolate(2, 0.5) = vec3(4.513393, 3.281250, 0.000000)
-*/

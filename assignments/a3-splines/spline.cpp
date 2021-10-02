@@ -95,25 +95,6 @@ void Spline::editControlPoint(int id, const glm::vec3& v) {
   mInterpolator->editControlPoint(id, v);
 }
 
-// int findSegment(float t, std::vector<float> times) {
-//   /**
-//    * This method finds the segment given the current time and 
-//    * the array of time using binary search.
-//    * It takes in the time t, and an array of time times, and 
-//    * return the segment in which this time can be found.
-//    */
-
-//   if(t < times[0] | t > times[times.size()-1]) {
-//       return -1;
-//   }
-
-//   for (int i = 0; i < times.size() - 1; i++){
-//     if (t >= times[i] && t < times[i+1]) {
-//       return i;
-//     }
-//   }
-// }
-
 glm::vec3 Spline::getValue(float t) const {
   if (mDirty) 
   {
@@ -146,9 +127,6 @@ glm::vec3 Spline::getValue(float t) const {
     normalizedTime = (t - mTimes[segment]) / (mTimes[segment + 1] - mTimes[segment]);
   }
 
-  // std::cout << segment << std::endl;
-  // std::cout << t << std::endl;
-  // std::cout << normalizedTime << std::endl;
   if (getNumControlPoints() == 0) {
     return glm::vec3(0);
   } else {
