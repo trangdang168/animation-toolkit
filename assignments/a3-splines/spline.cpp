@@ -95,16 +95,66 @@ void Spline::editControlPoint(int id, const glm::vec3& v) {
   mInterpolator->editControlPoint(id, v);
 }
 
+// int findSegment(float t, std::vector<float> times) {
+//   /**
+//    * This method finds the segment given the current time and 
+//    * the array of time using binary search.
+//    * It takes in the time t, and an array of time times, and 
+//    * return the segment in which this time can be found.
+//    */
+
+//   if(t < times[0] | t > times[times.size()-1]) {
+//       return -1;
+//   }
+
+//   for (int i = 0; i < times.size() - 1; i++){
+//     if (t >= times[i] && t < times[i+1]) {
+//       return i;
+//     }
+//   }
+// }
+
 glm::vec3 Spline::getValue(float t) const {
   if (mDirty) 
   {
     mInterpolator->computeControlPoints(mKeys);
     mDirty = false;
   }
+  float normalizedTime = 0.0f;
+  int segment = 0;
 
-  // todo: your code here
-  // compute the segment containing t
-  // compute the value [0, 1] along the segment for interpolation
-  return glm::vec3(0); 
+  if (mTimes.size() == 0) {
+    normalizedTime = 0.0f;
+    segment = 0;
+  } else if (t <= mTimes[0]) {
+    normalizedTime = mTimes[0];
+    segment = 0;
+  } else if (t >= getDuration()) {
+    normalizedTime = getDuration();
+
+    // the first point of the last segment
+    segment = mTimes.size() - 2;
+  } else {
+
+    // search for the segment with binary search
+    for (int i = 0; i < mTimes.size() - 1; i++){
+      if (t >= mTimes[i] && t < mTimes[i+1]) {
+        segment = i;
+        break;
+      }
+    }
+    normalizedTime = (t - mTimes[segment]) / (mTimes[segment + 1] - mTimes[segment]);
+  }
+
+  // std::cout << segment << std::endl;
+  // std::cout << t << std::endl;
+  // std::cout << normalizedTime << std::endl;
+  if (getNumControlPoints() == 0) {
+    return glm::vec3(0);
+  } else {
+    glm::vec3 result = mInterpolator->interpolate(segment, normalizedTime);
+    // compute the value [0, 1] along the segment for interpolation
+    return result; 
+  }
 }
 

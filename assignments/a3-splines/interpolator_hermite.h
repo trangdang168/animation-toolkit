@@ -40,32 +40,30 @@ public:
         mCtrlPoints.clear();
 
         // Solve the system of linear equations
-        Eigen::MatrixXf A(5, 5);
-        Eigen::MatrixXf p(5, 3);
-        Eigen::MatrixXf pPrime(5, 3); // slopes for each control point
+        Eigen::MatrixXf A = Eigen::MatrixXf::Zero(keys.size(), keys.size());
+        Eigen::MatrixXf p = Eigen::MatrixXf::Zero(keys.size(), 3);
+        Eigen::MatrixXf pPrime = Eigen::MatrixXf::Zero(keys.size(), 3); // slopes for each control point
 
-        // matrix A, natural end points
-        //A(0,0) =  2; A(0,1) = 1; A(0,2) = 0; A(0,3) = 0; A(0,4) = 0;
-        A(1,0) =  1; A(1,1) = 4; A(1,2) = 1; A(1,3) = 0; A(1,4) = 0;
-        A(2,0) =  0; A(2,1) = 1; A(2,2) = 4; A(2,3) = 1; A(2,4) = 0;
-        A(3,0) =  0; A(3,1) = 0; A(3,2) = 1; A(3,3) = 4; A(3,4) = 1;
-        //A(4,0) =  0; A(4,1) = 0; A(4,2) = 0; A(4,3) = 1; A(4,4) = 2;
-            
+
+        // matrix A
+        for (int i = 0; i < keys.size() - 2; i++) {
+            A(i+1, i) = 1;
+            A(i+1, i+1) = 4;
+            A(i+1, i+2) = 1;
+        }
         
-        // matrix P, natural / clamped end points
-        glm::vec3 v1 = 3.0f * (keys.at(2) - keys.at(0));
-        glm::vec3 v2 = 3.0f * (keys.at(3) - keys.at(1));
-        glm::vec3 v3 = 3.0f * (keys.at(4) - keys.at(2));
-
-        p(1,0) = v1[0]; p(1,1) = v1[1]; p(1,2) = v1[2]; 
-        p(2,0) = v2[0]; p(2,1) = v2[1]; p(2,2) = v2[2]; 
-        p(3,0) = v3[0]; p(3,1) = v3[1]; p(3,2) = v3[2]; 
+        for (int i = 0; i < keys.size() - 2; i++) {
+            glm::vec3 v = 3.0f * (keys.at(i+2) - keys.at(i));
+            p(i+1, 0) = v[0];
+            p(i+1, 1) = v[1];
+            p(i+1, 2) = v[2]; 
+        }
 
 
+        // set up clamped or natural top
         if (isClamped()) {
             // set up clamped A
-            A(0,0) =  1; A(0,1) = 0; A(0,2) = 0; A(0,3) = 0; A(0,4) = 0;
-            A(4,0) =  0; A(4,1) = 0; A(4,2) = 0; A(4,3) = 0; A(4,4) = 1;
+            A(0, 0) = 1;
 
             // set up clamped p
             p(0,0) = mClampDir[0];
@@ -74,26 +72,32 @@ public:
 
         } else {
             // set up natural A
-
-            A(0,0) =  2; A(0,1) = 1; A(0,2) = 0; A(0,3) = 0; A(0,4) = 0;
-            A(4,0) =  0; A(4,1) = 0; A(4,2) = 0; A(4,3) = 1; A(4,4) = 2;
+            A(0, 0) = 1;
+            A(0, 1) = 2;
 
             // set up natural p
             glm::vec3 v0 = 3.0f * (keys.at(1) - keys.at(0));
             p(0,0) = v0[0]; p(0,1) = v0[1]; p(0,2) = v0[2];
         }
 
+        // set up clamped or natural bottom
         if (isClamped()) {
-            p(4,0) = mClampDir[0];
-            p(4,1) = mClampDir[1];
-            p(4,2) = mClampDir[2]; 
+            A(keys.size() - 1, keys.size() - 1) = 1;
+
+            p(keys.size() - 1,0) = mClampDir[0];
+            p(keys.size() - 1,1) = mClampDir[1];
+            p(keys.size() - 1,2) = mClampDir[2]; 
         } else {
-            glm::vec3 v4 = 3.0f * (keys.at(4) - keys.at(3));
-            p(4,0) = v4[0]; p(4,1) = v4[1]; p(4,2) = v4[2]; 
+            A(keys.size() - 1, keys.size() - 2) = 1;
+            A(keys.size() - 1, keys.size() - 1) = 2;
+
+            glm::vec3 v = 3.0f * (keys.at(keys.size() - 1) - keys.at(keys.size() - 2));
+            p(keys.size() - 1,0) = v[0]; p(keys.size()-1,1) = v[1]; p(keys.size()-1,2) = v[2]; 
+            std::cout<< "NATURAL"<<std::endl;
         }
 
         pPrime = A.inverse() * p;
-        for (int i = 0; i < 5; i ++) {
+        for (int i = 0; i < keys.size(); i ++) {
             mCtrlPoints.push_back(keys.at(i));
             glm::vec3 pVal = glm::vec3(0);
             pVal[0] = pPrime(i, 0);
@@ -101,6 +105,11 @@ public:
             pVal[2] = pPrime(i, 2);
             mCtrlPoints.push_back(pVal);
         }
+
+        std::cout<< "result"<<std::endl;
+        std::cout<<A<<std::endl;
+        std::cout<<p<<std::endl;
+        std::cout<<pPrime<<std::endl;
     }
 
     void setClamped(bool c) { mIsClamped = c; }
@@ -135,3 +144,23 @@ private:
 };
 
 #endif
+
+/**
+ * ontrol point: vec3(0.000000, 0.000000, 0.000000)
+control point: vec3(1.000000, 0.000000, 0.000000)
+control point: vec3(1.000000, 2.000000, 0.000000)
+control point: vec3(1.321429, 2.035714, 0.000000)
+control point: vec3(3.000000, 3.000000, 0.000000)
+control point: vec3(2.714286, 0.857143, 0.000000)
+control point: vec3(6.000000, 3.000000, 0.000000)
+control point: vec3(2.821429, -2.464286, 0.000000)
+control point: vec3(8.000000, 0.000000, 0.000000)
+control point: vec3(1.000000, 0.000000, 0.000000)
+
+(clamped) interpolate(0, 0) = vec3(0.000000, 0.000000, 0.000000)
+(clamped) interpolate(3, 1) = vec3(8.000000, 0.000000, 0.000000)
+(clamped) interpolate(2, 0.5) = vec3(4.486607, 3.415179, 0.000000)
+(natural) interpolate(0, 0) = vec3(0.082321, 0.224750, 0.000000)
+(natural) interpolate(3, 1) = vec3(7.831821, 0.374250, 0.000000)
+(natural) interpolate(2, 0.5) = vec3(4.513393, 3.281250, 0.000000)
+*/
