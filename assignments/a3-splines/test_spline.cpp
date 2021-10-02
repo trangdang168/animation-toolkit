@@ -75,30 +75,30 @@ int main() {
    std::cout << "\n-------------------------------\n";
    std::cout << "Current interpolation type: " << spline.getInterpolationType() << std::endl;
    std::cout << "Number of control points: " << spline.getNumControlPoints() << std::endl;
-   // std::cout << "Duration: " << spline.getDuration() << std::endl;
-   // std::cout << "getValue(1.5): (clamped) " << to_string(test) << std::endl;
+   std::cout << "Duration: " << spline.getDuration() << std::endl;
+   std::cout << "getValue(1.5): (clamped) " << to_string(test) << std::endl;
 
-//    hermite.setClamped(false);
-//    spline.computeControlPoints();
-//    test = spline.getValue(1.5);
-//    std::cout << "getValue(1.5): (natural) " << to_string(test) << std::endl;
+   hermite.setClamped(false);
+   spline.computeControlPoints();
+   test = spline.getValue(1.5);
+   std::cout << "getValue(1.5): (natural) " << to_string(test) << std::endl;
 
    // test other methods
-   // spline.editKey(2, vec3(3, 1, 0));
-   // test = spline.getValue(1.5);
-   // float duration = spline.getDuration();
-   // std::cout << "\n-------------------------------\n";
-   // std::cout << "Current interpolation type: " << spline.getInterpolationType() << std::endl;
-   // std::cout << "Number of control points: " << spline.getNumControlPoints() << std::endl;
-   // std::cout << "Duration: " << duration << std::endl;
-   // std::cout << "getValue(1.5): (natural)" << to_string(test) << std::endl;
+   spline.editKey(2, vec3(3, 1, 0));
+   test = spline.getValue(1.5);
+   float duration = spline.getDuration();
+   std::cout << "\n-------------------------------\n";
+   std::cout << "Current interpolation type: " << spline.getInterpolationType() << std::endl;
+   std::cout << "Number of control points: " << spline.getNumControlPoints() << std::endl;
+   std::cout << "Duration: " << duration << std::endl;
+   std::cout << "getValue(1.5): (natural)" << to_string(test) << std::endl;
 
-   // spline.deleteKey(1);
-   // test = spline.getValue(1.5);
-   // std::cout << "\n-------------------------------\n";
-   // std::cout << "Current interpolation type: " << spline.getInterpolationType() << std::endl;
-   // std::cout << "Number of control points: " << spline.getNumControlPoints() << std::endl;
-   // std::cout << "Duration: " << duration << std::endl;
-   // std::cout << "getValue(1.5): " << to_string(test) << std::endl;
+   spline.deleteKey(1);
+   test = spline.getValue(1.5);
+   std::cout << "\n-------------------------------\n";
+   std::cout << "Current interpolation type: " << spline.getInterpolationType() << std::endl;
+   std::cout << "Number of control points: " << spline.getNumControlPoints() << std::endl;
+   std::cout << "Duration: " << duration << std::endl;
+   std::cout << "getValue(1.5): " << to_string(test) << std::endl;
 }
 

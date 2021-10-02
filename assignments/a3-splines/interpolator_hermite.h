@@ -72,8 +72,8 @@ public:
 
         } else {
             // set up natural A
-            A(0, 0) = 1;
-            A(0, 1) = 2;
+            A(0, 0) = 2;
+            A(0, 1) = 1;
 
             // set up natural p
             glm::vec3 v0 = 3.0f * (keys.at(1) - keys.at(0));
@@ -106,10 +106,10 @@ public:
             mCtrlPoints.push_back(pVal);
         }
 
-        std::cout<< "result"<<std::endl;
-        std::cout<<A<<std::endl;
-        std::cout<<p<<std::endl;
-        std::cout<<pPrime<<std::endl;
+        // std::cout<< "result"<<std::endl;
+        // std::cout<<A<<std::endl;
+        // std::cout<<p<<std::endl;
+        // std::cout<<pPrime<<std::endl;
     }
 
     void setClamped(bool c) { mIsClamped = c; }
