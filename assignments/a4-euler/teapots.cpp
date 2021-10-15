@@ -121,7 +121,7 @@ void TeapotsViewer::teapots()
 
   Quaternion quat;
   quat.fromMatrix(rot);
-  Vector3 axis; double angle;
+  Vector3 axis(1,0,0); double angle = 0;
   quat.toAxisAngle(axis, angle);
 
   Matrix3 qmat = quat.toMatrix();
