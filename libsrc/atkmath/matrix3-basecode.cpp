@@ -225,6 +225,16 @@ void Matrix3::fromAxisAngle(const Vector3& axis, double angleRad)
 {
    // TODO
    *this = Identity;
+   m11 = cos(angleRad) + (1-cos(angleRad)) * pow(axis[0], 2);
+   m12 = -sin(angleRad) * axis[2] + (1 - cos(angleRad))*axis[0]*axis[1];
+   m13 = axis[1]*sin(angleRad) + axis[0] * axis[2] * (1-cos(angleRad));
+   m21 = axis[0]*axis[1] * (1 - cos(angleRad)) + axis[2] * sin(angleRad);
+   m22 = cos(angleRad) + pow(axis[1], 2) * (1 - cos(angleRad));
+   m23 = axis[1]*axis[2]*(1-cos(angleRad)) - axis[0]*sin(angleRad);
+   m31 = axis[0] * axis[1] * (1-cos(angleRad)) - axis[1] * sin(angleRad);
+   m32 = axis[1] * axis[2] * (1 - cos(angleRad)) + axis[0] * sin(angleRad);
+   m33 = cos(angleRad) + pow(axis[2], 2) * (1 - cos(angleRad));
+
 }
 
 }

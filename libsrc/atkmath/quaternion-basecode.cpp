@@ -12,12 +12,19 @@ Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, double 
 
 void Quaternion::toAxisAngle (Vector3& axis, double& angleRad) const
 {
-	// TODO
+	angleRad = 2 * acos(mW);
+	Vector3 v = Vector3(mX, mY, mZ);
+	axis = v * 1/sin(angleRad/2);
+
 }
 
 void Quaternion::fromAxisAngle (const Vector3& axis, double angleRad)
 {
-	// TODO
+	Vector3 v = sin(angleRad/2) * axis;
+	double w = cos(angleRad/2);
+	mW = w;
+	mX = v[0]; mY = v[1]; mZ = v[2];
+	normalize();
 }
 
 Matrix3 Quaternion::toMatrix () const
