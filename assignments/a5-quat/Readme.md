@@ -1,7 +1,7 @@
 # Readme
 
-TODO: Replace this text with
+## Unique
 
-* images, gifs, videos
-* brief description of what each image/gif/video shows
+![Magnet attracting particles](http://g.recordit.co/32lJrPddtM.gif)
+A magnet attracting particles!
 
