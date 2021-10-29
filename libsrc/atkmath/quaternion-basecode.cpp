@@ -6,8 +6,22 @@ namespace atkmath {
 
 Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, double t)
 {
-	// TODO
-	return Quaternion(1,0,0,0);
+	Quaternion q;
+	double cosOmega = Dot(q0, q1);
+	double omega = acos(cosOmega);
+
+	if (cosOmega < 0) {
+		cosOmega = -cosOmega;
+		Quaternion q2 = -q1;
+		q = (sin(omega * (1.0 - t))/sin(omega)) * q0 + 
+			(sin(omega * t)/sin(omega)) * q2;
+	} else {
+		q = (sin(omega * (1.0 - t))/sin(omega)) * q0 + 
+			(sin(omega * t)/sin(omega)) * q1;
+	}
+
+	q.normalize();
+	return q;
 }
 
 void Quaternion::toAxisAngle (Vector3& axis, double& angleRad) const
