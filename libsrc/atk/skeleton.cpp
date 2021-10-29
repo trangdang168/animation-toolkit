@@ -100,8 +100,11 @@ Joint* Skeleton::getByName(const std::string& name) const
 {
     for (unsigned int i = 0; i < mJoints.size(); i++)
     {
+
+        // std::cout<< (mJoints[i]->getName() == name) << std::endl;
         if (name == mJoints[i]->getName())
         {
+            
             return mJoints[i];
         }
     }
