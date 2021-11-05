@@ -8,12 +8,13 @@ using namespace atk;
 class MotionViewer : public atkui::Framework
 {
 public:
-   MotionViewer() : atkui::Framework(atkui::Perspective) {
+   MotionViewer(std::string filename) : atkui::Framework(atkui::Perspective) {
+      this->filename = filename;
    }
 
    void setup() {
       BVHReader reader;
-      reader.load("../motions/Beta/jump.bvh", skeleton, motion);
+      reader.load(filename, skeleton, motion);
       motion.update(skeleton, 0);
    }
 
@@ -80,10 +81,19 @@ private:
    int currentFrame = 0; 
    bool paused = false;
    float time = 0;
+   std::string filename;
+
 };
 
 
 int main(int argc, char** argv) {
-   MotionViewer viewer;
+   // std::cout <<"first arg" << argv[1] <<std::endl;
+   std::string filename;
+   if (argc == 1) {
+      filename = "../motions/Beta/jump.bvh";
+   } else {
+      filename = argv[1];
+   }
+   MotionViewer viewer(filename);
    viewer.run();
 }
