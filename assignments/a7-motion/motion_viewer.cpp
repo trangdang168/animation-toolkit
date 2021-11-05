@@ -28,8 +28,7 @@ public:
       currentFrame = currentFrame % motion.getNumKeys();
 
       if (not paused) {
-         double t = motion.getNormalizedDuration(time) * motion.getDuration();
-         currentFrame = (int)(t / motion.getDeltaTime());
+         currentFrame = motion.getKeyID(time);
          motion.update(skeleton, time);
       } else {
          Pose p = motion.getKey(currentFrame);
