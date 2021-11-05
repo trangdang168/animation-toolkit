@@ -19,7 +19,21 @@ public:
 
    void scene() {
       time += dt();
-      motion.update(skeleton, time);
+
+      if (currentFrame < 0) {
+         currentFrame += motion.getNumKeys();
+      }
+
+      currentFrame = currentFrame % motion.getNumKeys();
+
+      if (not paused) {
+         double t = motion.getNormalizedDuration(time) * motion.getDuration();
+         currentFrame = (int)(t / motion.getDeltaTime());
+         motion.update(skeleton, time);
+      } else {
+         Pose p = motion.getKey(currentFrame);
+         skeleton.setPose(p);
+      }
 
       setColor(vec3(0,0,0.8));
       for (int i = 0; i < skeleton.getNumJoints(); i++) {
@@ -37,13 +51,32 @@ public:
    }
 
    virtual void keyUp(int key, int mods) {
+      if (key == GLFW_KEY_P) {
+         paused = !paused;
+      } else if (key == GLFW_KEY_0) {
+         currentFrame = 0;
+      } else if (key == GLFW_KEY_RIGHT_BRACKET) {
+         double curDeltaTime = motion.getDeltaTime();
+         motion.setDeltaTime(curDeltaTime / timeScale);
+
+      } else if (key == GLFW_KEY_LEFT_BRACKET) {
+         double curDeltaTime = motion.getDeltaTime();
+         motion.setDeltaTime(curDeltaTime * timeScale);
+
+      } else {
+         if (key == GLFW_KEY_PERIOD && paused) {
+            currentFrame++;
+         } else if (key == GLFW_KEY_COMMA && paused) {
+            currentFrame--;
+         }
+      }
    }
 
 private:
    Skeleton skeleton;
    Motion motion;
 
-   float timeScale = 1.0f;
+   float timeScale = 1.5f;
    int currentFrame = 0; 
    bool paused = false;
    float time = 0;
