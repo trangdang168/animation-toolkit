@@ -82,7 +82,7 @@ class Unique : public atkui::Framework {
 
       theta += dt() * thetaRate;
 
-      float x = cos(theta) * radius;
+      float x = sin(theta) * radius;
       float y = sin(elapsedTime())*100.0f + 150.0f;
       float z = sin(theta) * radius;
 
