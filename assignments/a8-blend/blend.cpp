@@ -30,7 +30,23 @@ public:
       blend.setFramerate(m1.getFramerate());
 
       // todo: replace the following line with your code
-      blend.appendKey(m1.getKey(0)); // placeholder
+
+      double duration = m1.getDuration() * (1 - alpha) + m2.getDuration() * alpha;
+      double deltaT = blend.getDeltaTime();
+
+      std::cout << "rate " << deltaT << std::endl;
+      for (double t = 0; t < duration; t+=deltaT) {
+         int key1 = m1.getKeyID(t);
+         Pose pose1 = m1.getKey(key1);
+
+         int key2 = m2.getKeyID(t);
+         Pose pose2 = m2.getKey(key2);
+
+         Pose newPose = Pose::Lerp(pose1, pose2, alpha);
+         blend.appendKey(newPose); 
+
+      }
+
       return blend;
    }
 
