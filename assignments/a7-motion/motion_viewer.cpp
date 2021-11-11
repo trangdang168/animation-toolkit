@@ -16,6 +16,7 @@ public:
       BVHReader reader;
       reader.load(filename, skeleton, motion);
       motion.update(skeleton, 0);
+      deltaTime = motion.getDeltaTime();
    }
 
    void scene() {
@@ -28,7 +29,8 @@ public:
       currentFrame = currentFrame % motion.getNumKeys();
 
       if (not paused) {
-         currentFrame = motion.getKeyID(time);
+         double t = motion.getNormalizedDuration(time) * motion.getDuration();
+         currentFrame = (int)(t / motion.getDeltaTime());
          motion.update(skeleton, time);
       } else {
          Pose p = motion.getKey(currentFrame);
@@ -56,12 +58,15 @@ public:
       } else if (key == GLFW_KEY_0) {
          currentFrame = 0;
       } else if (key == GLFW_KEY_RIGHT_BRACKET) {
-         double curDeltaTime = motion.getDeltaTime();
-         motion.setDeltaTime(curDeltaTime / timeScale);
+         timeScale -= 0.2;
+         if (timeScale < 0) {
+            timeScale = 1.0f;
+         }
+         motion.setDeltaTime(deltaTime * timeScale);
 
       } else if (key == GLFW_KEY_LEFT_BRACKET) {
-         double curDeltaTime = motion.getDeltaTime();
-         motion.setDeltaTime(curDeltaTime * timeScale);
+         timeScale +=0.2;
+         motion.setDeltaTime(deltaTime * timeScale);
 
       } else {
          if (key == GLFW_KEY_PERIOD && paused) {
@@ -76,11 +81,12 @@ private:
    Skeleton skeleton;
    Motion motion;
 
-   float timeScale = 1.5f;
+   float timeScale = 1.0f;
    int currentFrame = 0; 
    bool paused = false;
    float time = 0;
    std::string filename;
+   double deltaTime;
 
 };
 
