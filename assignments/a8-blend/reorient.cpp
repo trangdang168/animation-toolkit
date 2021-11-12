@@ -33,9 +33,27 @@ public:
       Motion result;
       result.setFramerate(motion.getFramerate());
 
-      // todo: your code here
-      Pose pose = motion.getKey(0);
-      result.appendKey(pose);
+      // compute transformations
+      quat desiredRot = glm::angleAxis(heading, vec3(0,1,0));
+      Transform desired = Transform::Rot(desiredRot);
+      desired.setT(pos);
+
+      Transform I = Transform::Translate(vec3(-1,0,0));
+
+      for (int i = 0; i < motion.getNumKeys(); i++) {
+         Pose pose = motion.getKey(i);
+         vec3 d = pose.rootPos;
+         quat rot = pose.jointRots[0];
+         Transform origin = Transform();
+         origin.setR(rot);
+         origin.setT(d);
+
+         Transform move = desired * I * origin;
+         pose.jointRots[0] = move.r();
+         pose.rootPos = move.t();
+
+         result.appendKey(pose);
+      }
       
       return result;
    }
