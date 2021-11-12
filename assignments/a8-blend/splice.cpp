@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <string>
 
+#define START_KEY 120
+
 using namespace atk;
 using namespace atkui;
 using namespace glm;
@@ -28,8 +30,68 @@ public:
    {
       Motion result;
       result.setFramerate(lower.getFramerate());
-      // todo: your code here
-      result.appendKey(lower.getKey(0));
+
+      // int upperFrame = 0; // frames for upper body
+
+      // for (int upperFrame = 0; upperFrame < upper.getNumKeys(); upperFrame++) {
+      //    int lowerFrame = upperFrame % lower.getNumKeys();
+      //    Pose pose = Pose(lower.getKey(lowerFrame)); // lower body
+         
+      //    // set the upper body's rotation to be the blend
+      //    Joint * upperBodyRoot = _skeleton.getByName("Beta:Spine1");
+      //    std::list<Joint *> queue;
+      //    queue.push_back(upperBodyRoot);
+      //    while (!queue.empty()) {
+      //       // go into the children
+      //       Joint * cur = queue.front();
+      //       int jointId = cur->getID();
+      //       quat r = slerp(upper.getKey(upperFrame).jointRots[jointId], 
+      //                      lower.getKey(lowerFrame).jointRots[jointId], alpha);
+      //       pose.jointRots[jointId] = r;
+      //       for (int j = 0; j < cur->getNumChildren(); j++) {
+      //          queue.push_back(cur->getChildAt(j));
+      //       }
+      //       queue.pop_front();
+      //    }
+
+      //    result.appendKey(pose);
+      // }
+
+      
+      // traverse all joints
+      for (int lowerFrame = 0; lowerFrame < lower.getNumKeys(); lowerFrame++) {
+         Pose pose = lower.getKey(lowerFrame); // lower body
+         Pose newPose;
+         newPose.deepCopy(pose);
+         
+         // set the upper body's rotation to be the blend
+         Joint * upperBodyRoot = _skeleton.getByName("Beta:Spine1");
+         std::list<Joint *> queue;
+         queue.push_back(upperBodyRoot);
+         
+         
+         while (!queue.empty()) {
+            // go into the children
+            Joint * cur = queue.front();
+            int jointId = cur->getID();
+
+            // blend
+            quat r = slerp(upper.getKey(START_KEY + lowerFrame).jointRots[jointId], 
+                           lower.getKey(lowerFrame).jointRots[jointId], alpha);
+            
+            newPose.jointRots[jointId] = r;
+
+            for (int j = 0; j < cur->getNumChildren(); j++) {
+               queue.push_back(cur->getChildAt(j));
+            }
+            queue.pop_front();
+   
+         }
+      
+         result.appendKey(newPose);
+
+      }
+      
       return result;
    }
 
