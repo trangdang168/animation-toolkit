@@ -34,7 +34,7 @@ public:
       double duration = m1.getDuration() * (1 - alpha) + m2.getDuration() * alpha;
       double deltaT = blend.getDeltaTime();
 
-      std::cout << "rate " << deltaT << std::endl;
+      // std::cout << "rate " << deltaT << std::endl;
       for (double t = 0; t < duration; t+=deltaT) {
          int key1 = m1.getKeyID(t);
          Pose pose1 = m1.getKey(key1);

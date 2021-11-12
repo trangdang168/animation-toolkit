@@ -38,7 +38,7 @@ public:
       Transform desired = Transform::Rot(desiredRot);
       desired.setT(pos);
 
-      Transform I = Transform::Translate(vec3(-1,0,0));
+      Transform I = Transform::Translate(-motion.getKey(0).rootPos);
 
       for (int i = 0; i < motion.getNumKeys(); i++) {
          Pose pose = motion.getKey(i);
