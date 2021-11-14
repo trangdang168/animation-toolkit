@@ -212,20 +212,13 @@ vec2 Framework::worldToScreen(const vec3& p) {
 
 glm::vec3 Framework::screenToWorld(const glm::vec2& screenPos) {
   vec2 spos = vec2(screenPos)/ vec2(width(), height());
-  //std::cout << "1: " << spos << std::endl;
   spos = 2.0f * spos - vec2(1.0f); 
-  //std::cout << "2: " << spos << std::endl;
   
   vec4 ndcPos = vec4(spos, 0, 1); 
   mat4 projection = renderer.projectionMatrix();
-  //ndcPos = inverse(projection) * ndcPos;
-  //std::cout << "3: " << ndcPos << std::endl;
   mat4 view = renderer.viewMatrix();
-  //ndcPos = inverse(view) * ndcPos;
-  //std::cout << "4: " << ndcPos << std::endl;
 
   vec4 pos = inverse(view) * inverse(projection) * ndcPos;
-  //std::cout << screenPos << " " << ndcPos << " " << pos << std::endl;
   return vec3(pos);
 }
 
