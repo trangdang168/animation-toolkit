@@ -26,6 +26,36 @@ public:
     reader.load(filename, skeleton_, motion2_);
   }
 
+Motion reorient(const Motion& motion, const vec3& pos, quat rot)
+   {
+      Motion result;
+      result.setFramerate(motion.getFramerate());
+
+      // compute transformations
+      // quat desiredRot = glm::angleAxis(heading, vec3(0,1,0));
+      Transform desired = Transform::Rot(rot);
+      desired.setT(pos);
+
+      Transform I = Transform::Translate(-motion.getKey(0).rootPos);
+
+      for (int i = 0; i < motion.getNumKeys(); i++) {
+         Pose pose = motion.getKey(i);
+         vec3 d = pose.rootPos;
+         quat rot = pose.jointRots[0];
+         Transform origin = Transform();
+         origin.setR(rot);
+         origin.setT(d);
+
+         Transform move = desired * I * origin; // when desired 
+         pose.jointRots[0] = move.r();
+         pose.rootPos = move.t();
+
+         result.appendKey(pose);
+      }
+      
+      return result;
+   }
+
   void crossfade(int numBlendFrames)
   {
     assert(motion1_.getNumKeys() > 0);
@@ -37,7 +67,31 @@ public:
     int start1 = motion1_.getNumKeys() - numBlendFrames;
     int start2 = 0;
 
-    // TODO: Your code here
+    blend_.setDeltaTime(motion1_.getDeltaTime());
+
+    for (int i = 0; i < start1; i++) {
+      Pose pose = motion1_.getKey(i);
+      blend_.appendKey(pose);
+    }
+
+    // TODO why is there a jitter ???
+
+    // reorient motion 2, before the blending
+    quat rot =  motion2_.getKey(start1).jointRots[0];
+    Motion motion2_reoriented = reorient(motion2_, motion1_.getKey(start1).rootPos, rot);
+  
+    // cross fade
+    for (int i = 0; i < numBlendFrames; i++) {
+      float alpha = float(i) / float(numBlendFrames);
+      Pose pose = Pose::Lerp(motion1_.getKey(start1 + i), 
+                              motion2_reoriented.getKey(start2 + i), alpha);
+      blend_.appendKey(pose);
+    }
+
+    for (int i = start2 + numBlendFrames; i < motion2_reoriented.getNumKeys(); i++) {
+      Pose pose = motion2_reoriented.getKey(i);
+      blend_.appendKey(pose);
+    }
   }
 
   void save(const std::string &filename)
@@ -57,7 +111,7 @@ private:
   SkeletonDrawer drawer_;
   Motion motion1_;
   Motion motion2_;
-  Motion blend_;
+  Motion blend_; // final blended motion
 };
 
 std::string PruneName(const std::string &name)
