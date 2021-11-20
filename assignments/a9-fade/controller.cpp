@@ -83,7 +83,6 @@ public:
     _walk.update(_skeleton, elapsedTime());
 
     // TODO: Your code here
-    // head global position
     Joint* head = _skeleton.getByName("Beta:Head");
     vec3 headPosition = head->getLocal2Global().transformPoint(vec3(0, 0, 0));
     vec3 cameraPosition= head->getLocal2Global().transformPoint(vec3(0, 0, -300));
