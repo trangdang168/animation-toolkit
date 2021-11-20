@@ -23,6 +23,7 @@ public:
                 mEpsilon(0.001),
                 mMaxIters(50),
                 mType(CCD) {
+    setWindowSize(1000,800);
   }
 
   virtual ~AIKViewer() {
@@ -33,7 +34,6 @@ public:
 
 protected:
   virtual void setup() {
-    setWindowSize(1000,800);
 
     BVHReader bvhLoader;
     bool v = bvhLoader.load("../motions/Beta/Beta.bvh", mActor, mMotion);
@@ -163,7 +163,7 @@ protected:
   }
 
   virtual void mouseMotion(int px, int py, int dx, int dy) {
-    setCameraEnabled(px > 155 || py > 455);
+    setCameraEnabled(px > 350 || py > 350);
   }
 
 protected:
