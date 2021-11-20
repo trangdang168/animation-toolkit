@@ -151,10 +151,10 @@ class AIKSimple : public atkui::Framework
     // align directions
 
     float gamma = asin(goalPosition[1] / r);
-    float beta = 0.0;
+    //float beta = 0.0;
 
     std::cout <<"atan2 lala " << -goalPosition[2]/goalPosition[0] << std::endl;
-    // float beta = atan2(-goalPosition[2]/goalPosition[0]);
+    float beta = atan2(-goalPosition[2], goalPosition[0]);
 
     // final rotations
     quat R12 = angleAxis(theta2z, vec3(0, 0, 1));
