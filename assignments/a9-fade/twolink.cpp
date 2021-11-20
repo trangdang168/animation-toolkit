@@ -147,7 +147,7 @@ class AIKSimple : public atkui::Framework
     }
     float phi = acos(cosPhi);
 
-    float theta2z = M_PI - phi;
+    float theta2z = phi - M_PI;
 
     float sinTheta1z = -length2 * sin(theta2z) / r;
     float theta1z = asin(sinTheta1z);
