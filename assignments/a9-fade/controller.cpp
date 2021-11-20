@@ -19,17 +19,9 @@ public:
     reader.load("../motions/Beta/walking.bvh", _skeleton, _walk);
     _drawer.showAxes = true;
 
-    vec3 rootPosition = _walk.getKey(0).rootPos;
-    _position = rootPosition;
-    speed = 10.0f;
+    _position = _walk.getKey(0).rootPos;
 
-    // fix the pose
-    for (int i = 1; i < _walk.getNumKeys(); i++) {
-      Pose pose = _walk.getKey(i);
-      pose.rootPos = rootPosition;
-      _walk.editKey(i, pose);
-
-    }
+    _speed = 50.0f;
     
   }
 
@@ -42,6 +34,7 @@ public:
     vec3 p = _skeleton.getRoot()->getGlobalTranslation();
     p[1] = 10; // set height close above the floor
 
+
     setColor(vec3(0, 1, 1));
     push();
     translate(p);
@@ -52,37 +45,60 @@ public:
     pop();
 }
 
-   void reorientInplace(Motion& motion, const vec3& pos, float heading)
-   {
+  //  void reorientInplace(Motion& motion, const vec3& pos, float heading)
+  //  {
 
-      // compute transformations
-      quat desiredRot = glm::angleAxis(heading, vec3(0,1,0));
-      Transform desired = Transform::Rot(desiredRot);
-      desired.setT(pos);
+  //     // compute transformations
+  //     quat desiredRot = glm::angleAxis(heading, vec3(0,1,0));
+  //     Transform desired = Transform::Rot(desiredRot);
+  //     desired.setT(pos);
 
-      Transform I = Transform::Translate(-motion.getKey(0).rootPos);
+  //     // Transform I = Transform::Translate(-motion.getKey(0).rootPos);
 
-      for (int i = 0; i < motion.getNumKeys(); i++) {
-         Pose pose = motion.getKey(i);
-         vec3 d = pose.rootPos;
-         quat rot = pose.jointRots[0];
-         Transform origin = Transform();
-         origin.setR(rot);
-         origin.setT(d);
+  //     Pose rootPose = motion.getKey(0);
+  //     vec3 d = rootPose.rootPos;
+  //     quat rot = rootPose.jointRots[0];
+  //     Transform current = Transform();
+  //     current.setR(rot);
+  //     current.setT(d);
 
-         Transform move = desired * I * origin; // when desired 
-         pose.jointRots[0] = move.r();
-         pose.rootPos = move.t();
 
-         motion.editKey(i, pose);
-      }
-   }
+  //     for (int i = 0; i < motion.getNumKeys(); i++) {
+  //        Pose pose = motion.getKey(i);
+  //       //  vec3 d = pose.rootPos;
+  //       //  quat rot = pose.jointRots[0];
+  //       //  Transform origin = Transform();
+  //       //  origin.setR(rot);
+  //       //  origin.setT(d);
+
+  //        Transform move = current.inverse() * desired; // when desired 
+  //        pose.jointRots[0] = move.r();
+  //        pose.rootPos = move.t();
+
+  //        motion.editKey(i, pose);
+  //     }
+  //  }
 
   virtual void update()
   {
+
+    // compute transformations
     _walk.update(_skeleton, elapsedTime());
 
     // TODO: Your code here
+    Pose pose = _skeleton.getPose();
+    quat headingRotation = glm::angleAxis(_heading, vec3(0, 1, 0));
+
+    // set heading rotation
+    pose.jointRots[0] = headingRotation;
+
+    // update position
+    Transform headingTransform = Transform::Rot(headingRotation);
+    pose.rootPos += _position + _speed * headingTransform.transformVector(vec3(0, 0, 1)) * dt();
+    // add to skeleton
+    _skeleton.setPose(pose);
+
+    // set camera to follow the head
     Joint* head = _skeleton.getByName("Beta:Head");
     vec3 headPosition = head->getLocal2Global().transformPoint(vec3(0, 0, 0));
     vec3 cameraPosition= head->getLocal2Global().transformPoint(vec3(0, 0, -300));
@@ -92,11 +108,11 @@ public:
     // update heading when key is down
     if (keyIsDown('D')) {
         _heading -= 0.05;
-       reorientInplace(_walk, _position, -0.05);
+      //  reorientInplace(_walk, _position, _heading);
     }
     if (keyIsDown('A')) {
       _heading += 0.05;
-      reorientInplace(_walk, _position, 0.05);
+      // reorientInplace(_walk, _position, _heading);
     }
   }
 
@@ -107,7 +123,7 @@ protected:
   Skeleton _skeleton;
   atkui::SkeletonDrawer _drawer;
   vec3 _position;
-  float speed;
+  float _speed;
 };
 
 int main(int argc, char **argv)

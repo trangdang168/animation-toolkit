@@ -26,14 +26,12 @@ public:
     reader.load(filename, skeleton_, motion2_);
   }
 
-Motion reorient(const Motion& motion, const vec3& pos, quat rot)
+void reorientInplace(Motion& motion, const vec3& pos, float heading)
    {
-      Motion result;
-      result.setFramerate(motion.getFramerate());
 
       // compute transformations
-      // quat desiredRot = glm::angleAxis(heading, vec3(0,1,0));
-      Transform desired = Transform::Rot(rot);
+      quat desiredRot = glm::angleAxis(heading, vec3(0,1,0));
+      Transform desired = Transform::Rot(desiredRot);
       desired.setT(pos);
 
       Transform I = Transform::Translate(-motion.getKey(0).rootPos);
@@ -50,10 +48,8 @@ Motion reorient(const Motion& motion, const vec3& pos, quat rot)
          pose.jointRots[0] = move.r();
          pose.rootPos = move.t();
 
-         result.appendKey(pose);
+         motion.editKey(i, pose);
       }
-      
-      return result;
    }
 
   void crossfade(int numBlendFrames)
@@ -74,22 +70,21 @@ Motion reorient(const Motion& motion, const vec3& pos, quat rot)
       blend_.appendKey(pose);
     }
 
-    // TODO why is there a jitter ???
-
     // reorient motion 2, before the blending
-    quat rot =  motion1_.getKey(start1 - 1).jointRots[0];
-    Motion motion2_reoriented = reorient(motion2_, motion1_.getKey(start1 - 1).rootPos, rot);
+    quat rot =  motion1_.getKey(motion1_.getNumKeys() - 1).jointRots[0];
+    float heading = glm::eulerAngles(rot)[1];
+    reorientInplace(motion2_, motion1_.getKey(motion1_.getNumKeys() - 1).rootPos, heading);
   
     // cross fade
     for (int i = 0; i < numBlendFrames; i++) {
       float alpha = float(i) / float(numBlendFrames);
       Pose pose = Pose::Lerp(motion1_.getKey(start1 + i), 
-                              motion2_reoriented.getKey(start2 + i), alpha);
+                              motion2_.getKey(start2 + i), alpha);
       blend_.appendKey(pose);
     }
 
-    for (int i = start2 + numBlendFrames; i < motion2_reoriented.getNumKeys(); i++) {
-      Pose pose = motion2_reoriented.getKey(i);
+    for (int i = start2 + numBlendFrames; i < motion2_.getNumKeys(); i++) {
+      Pose pose = motion2_.getKey(i);
       blend_.appendKey(pose);
     }
   }
