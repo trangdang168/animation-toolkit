@@ -127,8 +127,6 @@ class AIKSimple : public atkui::Framework
   void solveIKTwoLink(Skeleton &skeleton, const vec3 &goalPosition)
   {
     // todo: implement two link IK algorithm
-    std::cout << "goal " << goalPosition << std::endl;
-
     // aligning length
     vec3 rootPosition = skeleton.getRoot()->getGlobalTranslation();
 
@@ -141,6 +139,12 @@ class AIKSimple : public atkui::Framework
 
     float cosPhi =  (pow(r, 2) - pow(length1, 2) - pow(length2, 2)) 
                     / (-2 * length1 * length2);
+
+    if (cosPhi > 1.0f) {
+      cosPhi = 1.0f;
+    } else if (cosPhi < -1.0f) {
+      cosPhi = -1.0f;
+    }
     float phi = acos(cosPhi);
 
     float theta2z = M_PI - phi;
@@ -151,10 +155,7 @@ class AIKSimple : public atkui::Framework
     // align directions
 
     float gamma = asin(goalPosition[1] / r);
-    float beta = 0.0;
-
-    std::cout <<"atan2 lala " << -goalPosition[2]/goalPosition[0] << std::endl;
-    // float beta = atan2(-goalPosition[2]/goalPosition[0]);
+    float beta = atan2(-goalPosition[2], goalPosition[0]);
 
     // final rotations
     quat R12 = angleAxis(theta2z, vec3(0, 0, 1));
