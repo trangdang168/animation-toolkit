@@ -127,6 +127,44 @@ class AIKSimple : public atkui::Framework
   void solveIKTwoLink(Skeleton &skeleton, const vec3 &goalPosition)
   {
     // todo: implement two link IK algorithm
+    std::cout << "goal " << goalPosition << std::endl;
+
+    // aligning length
+    vec3 rootPosition = skeleton.getRoot()->getGlobalTranslation();
+
+    vec3 translation1 = skeleton.getByID(1)->getLocalTranslation();
+    float length1 = length(translation1);
+    vec3 translation2 = skeleton.getByID(2)->getLocalTranslation();
+    float length2 = length(translation2);
+
+    float r = distance(goalPosition, rootPosition);
+
+    float cosPhi =  (pow(r, 2) - pow(length1, 2) - pow(length2, 2)) 
+                    / (-2 * length1 * length2);
+    float phi = acos(cosPhi);
+
+    float theta2z = M_PI - phi;
+
+    float sinTheta1z = -length2 * sin(theta2z) / r;
+    float theta1z = asin(sinTheta1z);
+
+    // align directions
+
+    float gamma = asin(goalPosition[1] / r);
+    float beta = 0.0;
+
+    std::cout <<"atan2 lala " << -goalPosition[2]/goalPosition[0] << std::endl;
+    // float beta = atan2(-goalPosition[2]/goalPosition[0]);
+
+    // final rotations
+    quat R12 = angleAxis(theta2z, vec3(0, 0, 1));
+    quat R01 = angleAxis(beta, vec3(0, 1, 0)) * angleAxis(gamma, vec3(0, 0, 1))
+                * angleAxis(theta1z, vec3(0, 0, 1));
+
+    skeleton.getByID(0)->setLocalRotation(R01);
+    skeleton.getByID(1)->setLocalRotation(R12);
+    skeleton.fk();
+
   }
 
  private:
