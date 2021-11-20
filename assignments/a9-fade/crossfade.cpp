@@ -77,8 +77,8 @@ Motion reorient(const Motion& motion, const vec3& pos, quat rot)
     // TODO why is there a jitter ???
 
     // reorient motion 2, before the blending
-    quat rot =  motion2_.getKey(start1).jointRots[0];
-    Motion motion2_reoriented = reorient(motion2_, motion1_.getKey(start1).rootPos, rot);
+    quat rot =  motion1_.getKey(start1 - 1).jointRots[0];
+    Motion motion2_reoriented = reorient(motion2_, motion1_.getKey(start1 - 1).rootPos, rot);
   
     // cross fade
     for (int i = 0; i < numBlendFrames; i++) {
