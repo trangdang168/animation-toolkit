@@ -20,9 +20,14 @@ public:
       reader.load("../motions/Beta/walking.bvh", _skeleton, walk);
       Motion martialArts;
       reader.load("../motions/Beta/back_flip_to_uppercut.bvh", _skeleton, martialArts);
+      Motion leftTurn;
+      reader.load("../motions/Beta/left_turn_90.bvh", _skeleton, leftTurn);
 
       _motion = crossfade(walk, martialArts);
+      _motion = crossfade(_motion, leftTurn);
+      _motion = crossfade(_motion, leftTurn);
       _motion = crossfade(_motion, walk);
+      
       palette  =  {
          vec3(0,165,227)/255.0f,
          vec3(141,215,191)/255.0f,
@@ -32,24 +37,11 @@ public:
 
       for (int i = 0; i < numSkeletons; i++) {
          float size = 1;
-         vec3 pos = vec3(- 400 + i * 100, 0, 0);
+         vec3 pos = vec3(-200 + i * 100, 0, -100);
          atkui::SkeletonDrawer drawer = atkui::SkeletonDrawer(pos, palette[i], size);
          _drawer.push_back(drawer);
       }
 
-      // for (int i = 0; i < numSkeletons; i++) {
-      //    float size = 1;
-      //    vec3 pos = vec3(100, 0, - 250 + i * 100);
-      //    atkui::SkeletonDrawer drawer = atkui::SkeletonDrawer(pos, palette[i], size);
-      //    _drawer.push_back(drawer);
-      // }
-
-      // for (int i = 0; i < numSkeletons; i++) {
-      //    float size = 1;
-      //    vec3 pos = vec3(-100, 0, - 250 + i * 100);
-      //    atkui::SkeletonDrawer drawer = atkui::SkeletonDrawer(pos, palette[i], size);
-      //    _drawer.push_back(drawer);
-      // }
    }
 
   virtual void update()
@@ -63,6 +55,13 @@ public:
       update();
       for (int i = 0; i < _drawer.size(); i++) {
          _drawer.at(i).draw(_skeleton, *this);
+      }
+
+      // draw cubes
+      for (int i = 0; i < _drawer.size(); i++) {
+         vec3 pos = _drawer.at(i).pos + vec3(0, 100, 350);
+         setColor(palette.at(i));
+         drawCube(pos, vec3(50, 50, 50));
       }
 
    }
