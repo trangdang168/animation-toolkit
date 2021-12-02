@@ -45,39 +45,6 @@ public:
     pop();
 }
 
-  //  void reorientInplace(Motion& motion, const vec3& pos, float heading)
-  //  {
-
-  //     // compute transformations
-  //     quat desiredRot = glm::angleAxis(heading, vec3(0,1,0));
-  //     Transform desired = Transform::Rot(desiredRot);
-  //     desired.setT(pos);
-
-  //     // Transform I = Transform::Translate(-motion.getKey(0).rootPos);
-
-  //     Pose rootPose = motion.getKey(0);
-  //     vec3 d = rootPose.rootPos;
-  //     quat rot = rootPose.jointRots[0];
-  //     Transform current = Transform();
-  //     current.setR(rot);
-  //     current.setT(d);
-
-
-  //     for (int i = 0; i < motion.getNumKeys(); i++) {
-  //        Pose pose = motion.getKey(i);
-  //       //  vec3 d = pose.rootPos;
-  //       //  quat rot = pose.jointRots[0];
-  //       //  Transform origin = Transform();
-  //       //  origin.setR(rot);
-  //       //  origin.setT(d);
-
-  //        Transform move = current.inverse() * desired; // when desired 
-  //        pose.jointRots[0] = move.r();
-  //        pose.rootPos = move.t();
-
-  //        motion.editKey(i, pose);
-  //     }
-  //  }
 
   virtual void update()
   {
