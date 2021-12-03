@@ -21,6 +21,7 @@ public:
 
       _drawer.color = vec3(1,0,0);
       _head = _skeleton.getByName("Beta:Head");
+
    }
 
    void reset(Joint* head) {
