@@ -30,6 +30,8 @@ public:
       rightHandId = _skeleton.getByName("Beta:RightHand")->getID();
 
       hipId = _skeleton.getByName("Beta:Hips")->getID();
+      old.setT(_motion.getKey(0).rootPos);
+      old.setR(_motion.getKey(0).jointRots[0]);
 
       leftFootId = _skeleton.getByName("Beta:LeftFoot")->getID();
       leftFootTarget = _skeleton.getByName("Beta:LeftFoot")->getGlobalTranslation();
@@ -48,7 +50,6 @@ public:
       IKController ik;
 
       // TODO: Your code here
-      Transform old = _skeleton.getByID(hipId)->getLocal2Parent();
       Transform moveHip = Transform::Translate(vec3(
                                                 5.0f * sin(speed * elapsedTime()),
                                                 3.0f * cos(5.0 * elapsedTime()), 
@@ -107,6 +108,7 @@ protected:
    int hipId;
    vec3 hipTarget;
    float hipRange = 10.f;
+   Transform old;
 
    int leftFootId;
    vec3 leftFootTarget;
