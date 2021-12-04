@@ -87,6 +87,9 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   if (length(ankle->getGlobalTranslation() - goalPos) < epsilon) {
     return true;
   } else {
+    // std::cout << "goal " << goalPos << std::endl;
+    // std::cout << "end " << ankle->getGlobalTranslation() << std::endl;
+    // std::cout << "dis " << length(ankle->getGlobalTranslation() - goalPos)<<std::endl;
     return false;
   }
   
