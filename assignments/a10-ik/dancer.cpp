@@ -62,10 +62,8 @@ public:
 
       _skeleton.fk();
 
-      std::cout << "sin " << sin(elapsedTime()) << std::endl;
+      // std::cout << "sin " << sin(elapsedTime()) << std::endl;
 
-       _skeleton.getRoot()->setLocalTranslation(_gloHip + vec3(6.0f * sin(4.5f*elapsedTime()), 7.5f * abs(cos(4.5f * elapsedTime())), 0));
-      _skeleton.fk();
       ik.solveIKAnalytic(_skeleton, leftHandId, _lhandTarget, epsilon);
       ik.solveIKAnalytic(_skeleton, rightHandId, _rhandTarget, epsilon);
       bool solved = ik.solveIKAnalytic(_skeleton, leftFootId, leftFootTarget, epsilon);
