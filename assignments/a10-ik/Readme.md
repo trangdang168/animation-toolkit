@@ -1,7 +1,24 @@
 # Readme
 
-TODO: Replace this text with
+## Looking
+![looker](http://g.recordit.co/gS1CAzXIwP.gif)
 
-* images, gifs, videos
-* brief description of what each image/gif/video shows
+Skeleton looking at the target
+
+## Skeleton Viewer
+
+![Skeleton viewer](http://g.recordit.co/CBQ9kro73z.gif)
+
+Moving each joint to the desired positions.
+
+## Dancer
+![Dancer](http://g.recordit.co/zOOXsLglmz.gif)
+
+Dancing Skeleton
+
+## Unique
+
+![Dancer]()
+
+A skeleton that is trying to walk over some boxes.
 

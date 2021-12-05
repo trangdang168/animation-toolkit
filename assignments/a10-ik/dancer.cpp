@@ -19,25 +19,26 @@ public:
    {
       BVHReader reader;
       reader.load("../motions/Beta/idle.bvh", _skeleton, _motion);
+      _motion.update(_skeleton, 0);
       _skeleton.fk();
       _drawer.color = vec3(1,0,0);
 
-      _lhandOriginal = _skeleton.getByName("Beta:LeftHand")->getGlobalTranslation() + vec3(-30, 90, 15);
+      _lhandOriginal = _skeleton.getByName("Beta:LeftHand")->getGlobalTranslation() + vec3(0, 50, 15);
       _lhandTarget = _lhandOriginal;
-      _rhandOriginal = _skeleton.getByName("Beta:RightHand")->getGlobalTranslation() + vec3(30, 90, 15);
+      _rhandOriginal = _skeleton.getByName("Beta:RightHand")->getGlobalTranslation() + vec3(0, 50, 15);
       _rhandTarget = _rhandOriginal;
-      leftHandId = _skeleton.getByName("Beta:LeftHand")->getID();
-      rightHandId = _skeleton.getByName("Beta:RightHand")->getID();
+      _leftHandId = _skeleton.getByName("Beta:LeftHand")->getID();
+      _rightHandId = _skeleton.getByName("Beta:RightHand")->getID();
 
-      hipId = _skeleton.getByName("Beta:Hips")->getID();
-      old.setT(_motion.getKey(0).rootPos);
-      old.setR(_motion.getKey(0).jointRots[0]);
+      _hipId = _skeleton.getByName("Beta:Hips")->getID();
+      oldHip.setT(_motion.getKey(0).rootPos);
+      oldHip.setR(_motion.getKey(0).jointRots[0]);
 
-      leftFootId = _skeleton.getByName("Beta:LeftFoot")->getID();
-      leftFootTarget = _skeleton.getByName("Beta:LeftFoot")->getGlobalTranslation();
+      _leftFootId = _skeleton.getByName("Beta:LeftFoot")->getID();
+      _leftFootTarget = _skeleton.getByName("Beta:LeftFoot")->getGlobalTranslation();
 
-      rightFootId = _skeleton.getByName("Beta:RightFoot")->getID();
-      rightFootTarget = _skeleton.getByName("Beta:RightFoot")->getGlobalTranslation();
+      _rightFootId = _skeleton.getByName("Beta:RightFoot")->getID();
+      _rightFootTarget = _skeleton.getByName("Beta:RightFoot")->getGlobalTranslation();
 
       _lfootRotation = _skeleton.getByName("Beta:LeftFoot")->getGlobalRotation();
       _rfootRotation = _skeleton.getByName("Beta:RightFoot")->getGlobalRotation();
@@ -46,6 +47,8 @@ public:
    void update()
    {
       _motion.update(_skeleton, elapsedTime());
+
+      // _motion(_skeleton,0);
 
       IKController ik;
 
@@ -58,22 +61,22 @@ public:
 
       // std::cout << "loc " <<  sin(fmod(elapsedTime() * speed, float(2 * M_PI))) << std::endl;
       // std::cout << "angle " << fmod(elapsedTime() * speed, float(2 * M_PI)) << std::endl;
-      Transform newHip = moveHip * old;
-      _skeleton.getByID(hipId)->setLocal2Parent(newHip);
+      Transform newHip = moveHip * oldHip;
+      _skeleton.getByID(_hipId)->setLocal2Parent(newHip);
 
       _skeleton.fk();
 
       // std::cout << "sin " << sin(elapsedTime()) << std::endl;
 
-      ik.solveIKAnalytic(_skeleton, leftHandId, _lhandTarget, epsilon);
-      ik.solveIKAnalytic(_skeleton, rightHandId, _rhandTarget, epsilon);
-      bool solved = ik.solveIKAnalytic(_skeleton, leftFootId, leftFootTarget, epsilon);
+      ik.solveIKAnalytic(_skeleton, _leftHandId, _lhandTarget, epsilon);
+      ik.solveIKAnalytic(_skeleton, _rightHandId, _rhandTarget, epsilon);
+      bool solved = ik.solveIKAnalytic(_skeleton, _leftFootId, _leftFootTarget, epsilon);
       // std::cout << solved << std::endl;
-      bool solved2 = ik.solveIKAnalytic(_skeleton, rightFootId, rightFootTarget, epsilon);
+      bool solved2 = ik.solveIKAnalytic(_skeleton, _rightFootId, _rightFootTarget, epsilon);
       // std::cout << solved2 << std::endl;
 
-      _skeleton.getByID(leftFootId)->setLocalRotation(_skeleton.getByName("Beta:LeftFoot")->getLocalRotation() * inverse(_skeleton.getByName("Beta:LeftFoot")->getGlobalRotation()) * _lfootRotation);
-      _skeleton.getByID(rightFootId)->setLocalRotation(_skeleton.getByName("Beta:RightFoot")->getLocalRotation() * inverse(_skeleton.getByName("Beta:RightFoot")->getGlobalRotation()) * _rfootRotation);
+      _skeleton.getByID(_leftFootId)->setLocalRotation(_skeleton.getByName("Beta:LeftFoot")->getLocalRotation() * inverse(_skeleton.getByName("Beta:LeftFoot")->getGlobalRotation()) * _lfootRotation);
+      _skeleton.getByID(_rightFootId)->setLocalRotation(_skeleton.getByName("Beta:RightFoot")->getLocalRotation() * inverse(_skeleton.getByName("Beta:RightFoot")->getGlobalRotation()) * _rfootRotation);
      
 
    }
@@ -102,19 +105,17 @@ protected:
    vec3 _rhandTarget;
    vec3 _rhandOriginal;
    float handRange = 0.8f;
-   int leftHandId;
-   int rightHandId;
+   int _leftHandId;
+   int _rightHandId;
 
-   int hipId;
-   vec3 hipTarget;
-   float hipRange = 10.f;
-   Transform old;
+   int _hipId;
+   Transform oldHip;
 
-   int leftFootId;
-   vec3 leftFootTarget;
+   int _leftFootId;
+   vec3 _leftFootTarget;
    quat _lfootRotation;
-   int rightFootId;
-   vec3 rightFootTarget;
+   int _rightFootId;
+   vec3 _rightFootTarget;
    quat _rfootRotation;
 
 
