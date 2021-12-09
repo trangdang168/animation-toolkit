@@ -36,6 +36,7 @@ protected:
    float _time;
 
    // rigid body state and derivative
+   // x, theta, vel, thetaDerivative
    enum {POS, ORI, VEL, AVEL};
    float _state[4];
    float _derivative[4];

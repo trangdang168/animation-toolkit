@@ -4,9 +4,9 @@
 using namespace glm;
 using namespace atk;
 
-float ASteerable::kVelKv = 150.0; 
-float ASteerable::kOriKv = 150.0;  
-float ASteerable::kOriKp = 150.0;
+float ASteerable::kVelKv = 10.0; // v0
+float ASteerable::kOriKv = 16.0;   // v1
+float ASteerable::kOriKp = 64.0; // p1
 
 // Given a desired velocity, veld, and dt, compute a transform holding 
 // the new orientation and change in position
@@ -16,12 +16,41 @@ float ASteerable::kOriKp = 150.0;
 void ASteerable::senseControlAct(const vec3& veld, float dt)
 {
    // Compute _vd and _thetad
+   _vd = length(veld);
+   std::cout << "veld " << _veld << std::endl;
+   _thetad = atan2(_veld[0], _veld[2]);
 
-   // compute _force and _torque
+   // // compute _force and _torque
+   // kOriKv = pow(_thetad, 2);
+   // float zeta = 1.0f;
+   // kOriKp = 2 * _thetad * zeta;
+
+   // kVelKv = 0.02f;
+
+   std::cout << "------- " << std::endl;
+   std::cout << "state[2] " << _state[2] << std::endl;
+   std::cout << "state[3] " << _state[3] << std::endl;
+
+   std::cout << "kv " << kOriKv << std::endl;
+   std::cout << "kp " << kOriKp << std::endl;
+   _force = _mass * kVelKv * (_vd - _state[2]);
+   _torque = _inertia * (-kOriKv * _state[3] + 
+            kOriKp * (_thetad - _state[1]));
 
    // find derivative
+   // enum {VEL, AVEL, f/m, t/m};
+   float derivative[4];
+   derivative[0] = _state[2];
+   derivative[1] = _state[3];
+   derivative[2] = _force/_mass;
+   derivative[3] = _torque/_mass;
 
+   std::cout << "f " << _force << std::endl;
+   std::cout << "t " << _torque << std::endl;
    // update state
+   for (int i = 0; i < 4; i++) {
+      _state[i] += dt * derivative[i]; 
+   }
 
    // compute global position and orientation and update _characterRoot
    quat rot = glm::angleAxis(_state[ORI], vec3(0,1,0));
