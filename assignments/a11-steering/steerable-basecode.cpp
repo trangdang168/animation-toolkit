@@ -17,36 +17,31 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
 {
    // Compute _vd and _thetad
    _vd = length(veld);
-   std::cout << "veld " << _veld << std::endl;
+   // std::cout << "veld " << _veld << std::endl;
    _thetad = atan2(_veld[0], _veld[2]);
 
-   // // compute _force and _torque
-   // kOriKv = pow(_thetad, 2);
-   // float zeta = 1.0f;
-   // kOriKp = 2 * _thetad * zeta;
+   // std::cout << "------- " << std::endl;
+   // std::cout << "omega " << _torque/_inertia << std::endl;
+   // // std::cout << "state[2] " << _state[2] << std::endl;
+   // std::cout << "state[3] " << _state[3] << std::endl;
 
-   // kVelKv = 0.02f;
+   // std::cout << "kv " << kOriKv << std::endl;
+   // std::cout << "kp " << kOriKp << std::endl;
 
-   std::cout << "------- " << std::endl;
-   std::cout << "state[2] " << _state[2] << std::endl;
-   std::cout << "state[3] " << _state[3] << std::endl;
-
-   std::cout << "kv " << kOriKv << std::endl;
-   std::cout << "kp " << kOriKp << std::endl;
    _force = _mass * kVelKv * (_vd - _state[2]);
    _torque = _inertia * (-kOriKv * _state[3] + 
             kOriKp * (_thetad - _state[1]));
 
    // find derivative
-   // enum {VEL, AVEL, f/m, t/m};
+   // enum {VEL, AVEL, f/m, t/I};
    float derivative[4];
    derivative[0] = _state[2];
    derivative[1] = _state[3];
    derivative[2] = _force/_mass;
    derivative[3] = _torque/_inertia;
 
-   std::cout << "f " << _force << std::endl;
-   std::cout << "t " << _torque << std::endl;
+   // std::cout << "f " << _force << std::endl;
+   // std::cout << "t " << _torque << std::endl;
    // update state
    for (int i = 0; i < 4; i++) {
       _state[i] += dt * derivative[i]; 
