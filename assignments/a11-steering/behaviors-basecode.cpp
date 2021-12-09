@@ -73,8 +73,8 @@ vec3 AFlee::calculateDesiredVelocity(const ASteerable& actor,
 AArrival::AArrival() : ABehavior("Arrival") 
 {
    // TODO: Set good parameters
-   setParam("kArrival", 1);
-   setParam("TargetRadius", 1);
+   setParam("kArrival", 10);
+   setParam("TargetRadius", 100);
 }
 
 //
@@ -97,7 +97,6 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
    }
    vec3 result = normalize(targetPos - curPos) * speed;
 
-   // TODO how to test?
    return result;
 }
 
