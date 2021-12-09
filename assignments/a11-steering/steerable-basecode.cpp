@@ -34,17 +34,19 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
 
    // find derivative
    // enum {VEL, AVEL, f/m, t/I};
-   float derivative[4];
-   derivative[0] = _state[2];
-   derivative[1] = _state[3];
-   derivative[2] = _force/_mass;
-   derivative[3] = _torque/_inertia;
+   // float derivative[4];
+   _derivative[0] = _state[2];
+   _derivative[1] = _state[3];
+   _derivative[2] = _force/_mass;
+   _derivative[3] = _torque/_inertia;
+
+   // _derivative = derivative;
 
    // std::cout << "f " << _force << std::endl;
    // std::cout << "t " << _torque << std::endl;
    // update state
    for (int i = 0; i < 4; i++) {
-      _state[i] += dt * derivative[i]; 
+      _state[i] += dt * _derivative[i]; 
    }
 
    // compute global position and orientation and update _characterRoot
