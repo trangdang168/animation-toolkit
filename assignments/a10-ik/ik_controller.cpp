@@ -1,10 +1,10 @@
 #include "ik_controller.h"
+#include "atkui/framework.h"
 #include <cmath>
 #include <iostream>
 
 using namespace atk;
 using namespace glm;
-// using namespace std;
 
 bool IKController::solveIKAnalytic(Skeleton& skeleton, 
     int jointid, const vec3& goalPos, float epsilon) {
@@ -25,42 +25,75 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   }
 
   Joint* hip = knee->getParent();
-
   // TODO: Your code here
-  Joint* endEffector = skeleton.getByID(jointid);
-//   for (int j= 0; j<chain.size(); j++) {
-//   // Joint * child;
-//   // if (j == 0) {
-//   //   child = endEffector;
-//   // } else {
-//   //   child = chain.at(j-1);
-//   // }
 
-//   vec3 r = endEffector->getGlobalTranslation() - chain.at(j)->getGlobalTranslation();
-//   vec3 e = goalPos - endEffector->getGlobalTranslation();
-//   float theta  = atan2(length(cross(r, e)), dot(r, r) + dot(r, e));
-//   vec3 axis = cross(r, e) / length(cross(r, e));
-//   quat rot = angleAxis(theta, axis);
-//   chain.at(j)->setLocalRotation(rot);
-//   skeleton.fk();
+  float kneeAnkle = length(ankle->getLocalTranslation());
+  if (length(goalPos - ankle->getGlobalTranslation())< epsilon) {
+      return true;
+  }
+  float hipKnee = length(knee->getLocalTranslation());
 
-// }
-  return true;
+  vec3 hipToDesiredAnkle = goalPos - hip->getGlobalTranslation();
+  float r = length(hipToDesiredAnkle);
+  // std::cout << "r" << r <<std::endl;
+  float cosTheta2Z = (pow(r, 2) - pow(hipKnee, 2) - pow(kneeAnkle, 2)) 
+                      / (-2 * kneeAnkle * hipKnee);
+
+  // clamp cosTheta2Z to [-1.0f, 1.0f]
+  cosTheta2Z = std::max(std::min(cosTheta2Z, 1.0f), -1.0f); // clamps cphi
+  float theta2Z = acos(cosTheta2Z) - float(M_PI);
+
+  
+  // rotating the parent joint (the knee)
+  vec3 limbDir = normalize(knee->getLocalTranslation());
+  vec3 axis = cross(limbDir, vec3(0,0,-1));
+  if (limbDir[1] < 0) axis = cross(limbDir, vec3(0,0,1));
+  quat rot = angleAxis(theta2Z, axis);
+
+  Transform newKnee = Transform(rot, knee->getLocalTranslation(), vec3(1));
+  knee->setLocal2Parent(newKnee);
+
+  // set identity location for hip to avoid twisting
+  hip->setLocalRotation(IdentityQ);
+
+  skeleton.fk();
+
+  // angle axis method
+  vec3 newAnkle = ankle->getGlobalTranslation();
+  vec3 newR = newAnkle - hip->getGlobalTranslation();
+  vec3 e = goalPos - newAnkle;
+  vec3 crossRE = cross(newR, e);
+
+  if (length(crossRE) < 0.0001) {
+    return false;
+  }
+
+  vec3 u = normalize(crossRE);
+  if (hip != skeleton.getRoot()) {
+    u = hip->getParent()->getLocal2Global().inverse().transformVector(u);
+  }
+
+  float phi = atan(length(crossRE), dot(newR, e) + dot(newR, newR));
+
+
+  quat hipRot = angleAxis(phi, u);
+
+  Transform moveHip = Transform::Rot(hipRot);
+
+  //hip->setLocal2Parent(moveHip * hip->getLocal2Parent());
+  hip->setLocal2Parent(hip->getLocal2Parent() * moveHip);
+  skeleton.fk();
+
+  if (length(ankle->getGlobalTranslation() - goalPos) < epsilon) {
+    return true;
+  } else {
+    // std::cout << "goal " << goalPos << std::endl;
+    // std::cout << "end " << ankle->getGlobalTranslation() << std::endl;
+    // std::cout << "dis " << length(ankle->getGlobalTranslation() - goalPos)<<std::endl;
+    return false;
+  }
+  
 }
-
-// solveIKCCD positions the joint given by jointid so its global position
-// is located at goalPos
-//
-// param skeleton: the character to modify
-// param jointid: the ID of the joint to pose
-// param goalPos: the target position for jointid (global pos)
-// param chain: the list of joints to "nudge" towards the goal
-// param threshold: when the given joint is within threshold of the goal, stop iterating
-// param maxIters: the max number of iterations to try to reach the goal
-//
-// return true/false based on whether we could reach the goal
-// side effect: skeleton should by posed such that jointid is located at goalPos (or in this direction of
-// goalPos if the target is out of reach)
 
 bool IKController::solveIKCCD(Skeleton& skeleton, int jointid, 
     const vec3& goalPos, const std::vector<Joint*>& chain, 
@@ -69,43 +102,54 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
   if (chain.size() == 0) return true;
 
   // TODO: Your code here
-  // TODO account for the delta too
   Joint* endEffector = skeleton.getByID(jointid);
   vec3 global = endEffector->getGlobalTranslation();
+
+  // std::cout << "-------" << std::endl;
+  // std::cout << "goal pos " << goalPos << std::endl; 
 
   int i = 0;
    while (length(endEffector->getGlobalTranslation() - goalPos) > threshold 
           && i < maxIters){
-    // vec3 global = endEffector->getGlobalTranslation();
-    // vec3 diff = global - goalPos;
-
-    // std::cout << "pd " << diff[0] << std::endl;
-    // std::cout << diff[1] << std::endl;
-    // std::cout << diff[2] << std::endl;
-
-    // std::cout << "x " << global[0] << std::endl;
-    // std::cout << global[1] << std::endl;
-    // std::cout << global[2] << std::endl;
     for (int j= 0; j<chain.size(); j++) {
 
-      vec3 r = endEffector->getGlobalTranslation() - chain.at(j)->getGlobalTranslation();
+      Joint* curJoint = chain.at(j);
+      Joint* curJointParent = curJoint->getParent();
+
+      vec3 r = endEffector->getGlobalTranslation() - curJoint->getGlobalTranslation();
       vec3 e = goalPos - endEffector->getGlobalTranslation();
-      float theta  = nudgeFactor * atan2(length(cross(r, e)), dot(r, r) + dot(r, e));
-      vec3 axis = cross(r, e) / length(cross(r, e));
+      // std::cout << "-------" << std::endl;
+      // std::cout << "goal pos " << goalPos << std::endl; 
+      // std::cout << "e " << e << std::endl;
+      // std::cout << "r " << r << std::endl;
       
-      // std::cout << "r " << r[0] << std::endl;
-      // std::cout << "r " << r[1] << std::endl;
-      // std::cout << "r " << r[2] << std::endl;
-      // std::cout <<"e " << e[0] << std::endl;
-      // std::cout <<"e " << e[1] << std::endl;
-      // std::cout <<"e " << e[2] << std::endl;
-
-      std::cout << "angle " << theta << std::endl;
+      vec3 crossRE = cross(r, e);
+      // std::cout <<"crossed " << crossRE << std::endl;
+      vec3 axis;
       
-      quat rot = angleAxis(theta, axis);
-      chain.at(j)->setLocalRotation(rot);
-      chain.at(j)->fk();
+      if (length(crossRE)  < 0.00001) {
+        continue;
+      } 
+      axis = normalize(crossRE);
 
+      float theta  = nudgeFactor * atan2(length(crossRE), dot(r, r) + dot(r, e));
+
+      std::cout << "angle computed " << atan2(length(cross(r, e)), dot(r, r) + dot(r, e)) << std::endl;
+
+      vec3 localAxis = (curJointParent != skeleton.getRoot()) ? curJointParent->getLocal2Global().inverse().transformVector(axis) : axis;
+      // std::cout << "parent " << curJointParent->getLocal2Global().inverse().transformVector(axis) << std::endl;
+      // std::cout << "parent " << curJointParent->getName() << std::endl;
+
+      std::cout << "angle rotated " << theta << std::endl;
+
+      // std::cout << "localAxis " << localAxis << std::endl;
+      quat rot = angleAxis(theta, localAxis);
+      // std::cout << "rot " << rot << std::endl;
+
+      curJoint->setLocalRotation(rot * curJoint->getLocalRotation());
+      skeleton.fk();
+
+      //std::cout << "ee after " << endEffector->getGlobalTranslation() << std::endl;
     }
     i++;
   }
