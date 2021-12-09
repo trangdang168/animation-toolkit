@@ -18,7 +18,7 @@ Dancing Skeleton
 
 ## Unique
 
-![Dancer]()
+![Overcoming obstacles](http://g.recordit.co/NGHOI2F7zh.gif)
 
 A skeleton that is trying to walk over some boxes.
 
