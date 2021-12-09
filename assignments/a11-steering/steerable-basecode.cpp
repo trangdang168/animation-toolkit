@@ -42,8 +42,8 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
 
    // _derivative = derivative;
 
-   // std::cout << "f " << _force << std::endl;
-   // std::cout << "t " << _torque << std::endl;
+   std::cout << "f " << _force << std::endl;
+   std::cout << "t " << _torque << std::endl;
    // update state
    for (int i = 0; i < 4; i++) {
       _state[i] += dt * _derivative[i]; 
