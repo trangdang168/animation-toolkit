@@ -4,7 +4,7 @@
 using namespace glm;
 using namespace atk;
 
-float ASteerable::kVelKv = 10.0; // v0
+float ASteerable::kVelKv = 5.0; // v0
 float ASteerable::kOriKv = 16.0;   // v1
 float ASteerable::kOriKp = 64.0; // p1
 
@@ -43,7 +43,7 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
    derivative[0] = _state[2];
    derivative[1] = _state[3];
    derivative[2] = _force/_mass;
-   derivative[3] = _torque/_mass;
+   derivative[3] = _torque/_inertia;
 
    std::cout << "f " << _force << std::endl;
    std::cout << "t " << _torque << std::endl;
