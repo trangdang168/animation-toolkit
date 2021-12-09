@@ -116,7 +116,17 @@ ADeparture::ADeparture() : ABehavior("Departure")
 vec3 ADeparture::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-   return vec3(0,0,0);
+   vec3 curPos = actor.getPosition();
+   float maxSpeed = getParam("MaxSpeed");
+   float speed;
+   float distance = length(targetPos - actor.getPosition());
+   if (distance <= getParam("TargetRadius")) {
+      speed = (distance / getParam("TargetRadius")) * maxSpeed;
+   } else {
+      speed = maxSpeed;
+   }
+   vec3 result = -normalize(targetPos - curPos) * speed;
+   return result;
 }
 
 //--------------------------------------------------------------
@@ -141,12 +151,17 @@ vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
 AWander::AWander() : ABehavior("Wander")
 {
    setParam("kWander", 1);
+   setParam("wanderRate", 1);
+   setParam("wanderStrength", 1);
+
+
 }
 
 // Wander returns a velocity whose direction changes randomly (and smoothly)
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
+    //float jitterVelocity = (getParam("wanderRate") * )
    return vec3(0,0,0);
 }
 
