@@ -16,11 +16,13 @@ float ASteerable::kOriKp = 64.0; // p1
 void ASteerable::senseControlAct(const vec3& veld, float dt)
 {
    // Compute _vd and _thetad
+   // target 100 0 100
    _vd = length(veld);
-   // std::cout << "veld " << _veld << std::endl;
    _thetad = atan2(_veld[0], _veld[2]);
 
    // std::cout << "------- " << std::endl;
+   // std::cout << "veld " << _veld << std::endl;
+   // std::cout << "cur Pos " << getPosition() << std::endl;
    // std::cout << "omega " << _torque/_inertia << std::endl;
    // // std::cout << "state[2] " << _state[2] << std::endl;
    // std::cout << "state[3] " << _state[3] << std::endl;
@@ -28,9 +30,18 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
    // std::cout << "kv " << kOriKv << std::endl;
    // std::cout << "kp " << kOriKp << std::endl;
 
+   // TODO have the smaller angle of the two
+   float thetaDifference = fmod(_thetad - _state[1] + float(M_PI), float(2*M_PI)) - M_PI;
+
    _force = _mass * kVelKv * (_vd - _state[2]);
-   _torque = _inertia * (-kOriKv * _state[3] + 
-            kOriKp * (_thetad - _state[1]));
+   _torque = _inertia * ((-kOriKv * _state[3]) + 
+            kOriKp * (thetaDifference));
+
+   // std::cout << "theta D state " << thetaDifference << std::endl;
+   // std::cout << "theta " << _state[1] << std::endl;
+   // std::cout << "thetad " << _thetad << std::endl; 
+ 
+   // min(_thetad - _state[1], _thetad - _state[1] + M_PI)
 
    // find derivative
    // enum {VEL, AVEL, f/m, t/I};
@@ -40,10 +51,8 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
    _derivative[2] = _force/_mass;
    _derivative[3] = _torque/_inertia;
 
-   // _derivative = derivative;
-
-   std::cout << "f " << _force << std::endl;
-   std::cout << "t " << _torque << std::endl;
+   // std::cout << "f " << _force << std::endl;
+   // std::cout << "t " << _torque << std::endl;
    // update state
    for (int i = 0; i < 4; i++) {
       _state[i] += dt * _derivative[i]; 
