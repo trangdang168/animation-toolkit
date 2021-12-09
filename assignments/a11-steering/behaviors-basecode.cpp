@@ -59,7 +59,12 @@ vec3 AFlee::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
 
-   return vec3(0, 0, 0);
+   vec3 curPos = actor.getPosition();
+   float maxSpeed = getParam("MaxSpeed");
+   vec3 result = -normalize(targetPos - curPos) * maxSpeed;
+
+   // TODO how to test?
+   return result;
 }
 
 //--------------------------------------------------------------
@@ -81,7 +86,19 @@ AArrival::AArrival() : ABehavior("Arrival")
 vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-    return vec3(0,0,0);
+   vec3 curPos = actor.getPosition();
+   float maxSpeed = getParam("MaxSpeed");
+   float speed;
+   float distance = length(targetPos - actor.getPosition());
+   if (distance <= getParam("TargetRadius")) {
+      speed = (distance / getParam("TargetRadius")) * maxSpeed;
+   } else {
+      speed = maxSpeed;
+   }
+   vec3 result = normalize(targetPos - curPos) * speed;
+
+   // TODO how to test?
+   return result;
 }
 
 //--------------------------------------------------------------
