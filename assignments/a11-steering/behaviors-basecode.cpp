@@ -34,9 +34,12 @@ vec3 ASeek::calculateDesiredVelocity(const ASteerable& actor,
 {
    vec3 curPos = actor.getPosition();
    float maxSpeed = getParam("MaxSpeed");
-   vec3 result = normalize(target - curPos) * maxSpeed;
+   vec3 distance = target - curPos;
+   if (length(distance) < 50.0) {
+      return vec3(0);
+   }
+   vec3 result = normalize(distance) * maxSpeed;
 
-   // TODO how to test?
    return result;
 }
 
@@ -105,7 +108,7 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
 
 ADeparture::ADeparture() : ABehavior("Departure") 
 {
-   setParam("InnerRadius", 1);
+   setParam("InnerRadius", 100);
    setParam("OuterRadius", 1);
    setParam("kDeparture", 1);
 }
@@ -151,18 +154,40 @@ vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
 AWander::AWander() : ABehavior("Wander")
 {
    setParam("kWander", 1);
-   setParam("wanderRate", 1);
-   setParam("wanderStrength", 1);
+   setParam("wanderRate", 10);
+   setParam("wanderStrength", 100);
 
 
+}
+
+float generateRandomFloat() {
+   float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+   return r;
 }
 
 // Wander returns a velocity whose direction changes randomly (and smoothly)
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-    //float jitterVelocity = (getParam("wanderRate") * )
-   return vec3(0,0,0);
+
+   vec3 curPos = actor.getPosition();
+   float maxSpeed = getParam("MaxSpeed");
+   float speed;
+   vec3 distance = target - actor.getPosition();
+   if (length(distance) <= 50.0) {
+      speed = 0;
+   } else {
+      speed = maxSpeed;
+   }
+   vec3 desiredVel = -normalize(distance) * speed;
+
+   vec3 jitterVelocity = vec3(getParam("wanderRate") * generateRandomFloat(), 
+                              0, 
+                              getParam("wanderRate") * generateRandomFloat());
+   
+   vec3 jitter = getParam("wanderStrength") * normalize(jitterVelocity);
+   std::cout << "desired vec " << actor.getDesiredVelocity() << std::endl;
+   return jitter + desiredVel;
 }
 
 //--------------------------------------------------------------

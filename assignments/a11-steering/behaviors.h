@@ -6,6 +6,8 @@
 #include "obstacle.h"
 #include "world.h"
 
+#define MIN_DIST 50.0f
+
 class ABehavior
 {
 public:

@@ -17,13 +17,13 @@ ABehaviorViewer::ABehaviorViewer() :
    _behaviors[FLEE] = new AFlee();
    _behaviors[ARRIVAL] = new AArrival();
    _behaviors[DEPARTURE] = new ADeparture();
-   _behaviors[COHESION] = new ACohesion();
-   _behaviors[ALIGNMENT] = new AAlignment();
-   _behaviors[SEPARATION] = new ASeparation();
-   _behaviors[LEADER] = new ALeader();
-   _behaviors[FLOCKING] = new AFlocking();
    _behaviors[AVOID] = new AAvoid();
    _behaviors[WANDER] = new AWander();
+   _behaviors[ALIGNMENT] = new AAlignment();
+   _behaviors[SEPARATION] = new ASeparation();   
+   _behaviors[COHESION] = new ACohesion();
+   _behaviors[FLOCKING] = new AFlocking();
+   _behaviors[LEADER] = new ALeader();
    setWindowSize(1000,800);
 }
 
