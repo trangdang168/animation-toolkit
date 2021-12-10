@@ -18,7 +18,7 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
    // Compute _vd and _thetad
    // target 100 0 100
    _vd = length(veld);
-   _thetad = atan2(_veld[0], _veld[2]);
+   _thetad = atan2(veld[0], veld[2]);
 
    float thetaDifference = fmod(_thetad - _state[1] + float(M_PI), float(2*M_PI)) - M_PI;
 
@@ -53,8 +53,14 @@ void ASteerable::randomizeAppearance()
    // for _time
 
    // to randomize color, call _drawer.setColor
+   _drawer.color = agl::randomUnitVector();
 
    // to randomize shape, compute random values for _drawer.setJointRadius
+   float s = 0.8 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1.2-0.8)));
+   _drawer.size = vec3(s);
+   float jointRadius = 10.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(15.0f-10.0f)));
+   _drawer.jointRadius = jointRadius;
+
    // or randomly assign different drawers to have a mix of characters
 }
 

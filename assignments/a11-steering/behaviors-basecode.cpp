@@ -108,7 +108,7 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
 
 ADeparture::ADeparture() : ABehavior("Departure") 
 {
-   setParam("InnerRadius", 100);
+   setParam("InnerRadius", 1);
    setParam("OuterRadius", 1);
    setParam("kDeparture", 1);
 }
@@ -154,16 +154,12 @@ vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
 AWander::AWander() : ABehavior("Wander")
 {
    setParam("kWander", 1);
-   setParam("wanderRate", 10);
-   setParam("wanderStrength", 100);
+   setParam("wanderRate", 1);
+   setParam("wanderStrength", 1);
 
 
 }
 
-float generateRandomFloat() {
-   float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-   return r;
-}
 
 // Wander returns a velocity whose direction changes randomly (and smoothly)
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
@@ -171,9 +167,12 @@ vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
 {
    vec3 desiredVel = actor.getDesiredVelocity();
 
-   vec3 jitterVelocity = vec3(getParam("wanderRate") * generateRandomFloat(), 
+   float firstRandomNum = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);;
+   float secondRandomNum = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+   vec3 jitterVelocity = vec3(getParam("wanderRate") * firstRandomNum, 
                               0, 
-                              getParam("wanderRate") * generateRandomFloat());
+                              getParam("wanderRate") * secondRandomNum);
    
    vec3 jitter = getParam("wanderStrength") * normalize(jitterVelocity);
    //std::cout << "desired vec " << actor.getDesiredVelocity() << std::endl;

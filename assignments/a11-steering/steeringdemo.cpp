@@ -69,6 +69,7 @@ void ASteeringDemo::keyUp(int key, int mods)
 
 int main(int argc, char** argv)
 {
+   srand (static_cast <unsigned> (time(0)));
     ASteeringDemo viewer;
     viewer.run();
     return 0;

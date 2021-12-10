@@ -191,6 +191,7 @@ void ABehaviorViewer::runGui()
 
 int main(int argc, char** argv)
 {
+   srand (static_cast <unsigned> (time(0)));
    ABehaviorViewer viewer;
 	viewer.run();
 	return 0;
