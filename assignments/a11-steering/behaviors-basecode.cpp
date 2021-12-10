@@ -169,24 +169,14 @@ float generateRandomFloat() {
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-
-   vec3 curPos = actor.getPosition();
-   float maxSpeed = getParam("MaxSpeed");
-   float speed;
-   vec3 distance = target - actor.getPosition();
-   if (length(distance) <= 50.0) {
-      speed = 0;
-   } else {
-      speed = maxSpeed;
-   }
-   vec3 desiredVel = -normalize(distance) * speed;
+   vec3 desiredVel = actor.getDesiredVelocity();
 
    vec3 jitterVelocity = vec3(getParam("wanderRate") * generateRandomFloat(), 
                               0, 
                               getParam("wanderRate") * generateRandomFloat());
    
    vec3 jitter = getParam("wanderStrength") * normalize(jitterVelocity);
-   std::cout << "desired vec " << actor.getDesiredVelocity() << std::endl;
+   //std::cout << "desired vec " << actor.getDesiredVelocity() << std::endl;
    return jitter + desiredVel;
 }
 
